@@ -21,11 +21,11 @@ const Home: NextPage = () => {
       <div className="p-2"></div>
       <div className="rounder p-8 flex justify-between max-w-2xl items-center">
         <div className="w-64 h-64 bg-red-800 text-center">
-          <img
+          {/* <img
             src={firstPokemon.data?.sprites.front_default}
             alt="First pokemon"
             className="w-full"
-          />
+          /> */}
           <div className="capitalize pt-1">
             {firstPokemon.data?.name}
           </div>
@@ -33,11 +33,11 @@ const Home: NextPage = () => {
         </div>
         <div className="p-8">Vs</div>
         <div className="w-64 h-64 bg-red-800 text-center">
-          <img
+          {/* <img
             src={secondPokemon.data?.sprites.front_default}
             alt="First pokemon"
             className="w-full"
-          />
+          /> */}
           <div className="capitalize pt-1">
             {secondPokemon.data?.name}
           </div>
