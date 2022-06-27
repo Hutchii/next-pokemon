@@ -39,6 +39,11 @@ const Home: NextPage = () => {
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-gray-900 via-[#18181800] to-gray-900" />
       <div className="text-2xl text-center">Which pokemon is rounder?</div>
       <div className="p-2"></div>
+      {!dataLoaded && (
+        <div className="z-10">
+          <Image src="/svg/spinner.svg" alt="Spinner" width={57} height={57} />
+        </div>
+      )}
       {dataLoaded && (
         <div className="p-8 flex justify-between items-center z-10">
           <PokemonListing
@@ -71,10 +76,9 @@ const PokemonListing: React.FC<{
   const generateCountPercent = (pokemon: PokemonFromServer) => {
     const { VoteFor, VoteAgainst } = pokemon._count;
     if (VoteFor + VoteAgainst === 0) return 0;
-    return (VoteFor / (VoteFor + VoteAgainst)) * 100;
+    return ((VoteFor / (VoteFor + VoteAgainst)) * 100).toFixed(2);
     // return `${(VoteFor / (VoteFor + VoteAgainst)) * 100}%`;
   };
-
   return (
     <div className="text-center w-[400px]">
       <div
