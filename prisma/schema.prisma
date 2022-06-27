@@ -19,6 +19,9 @@ model Vote {
   votedFor             Int
   votedAgainstRelation Pokemon  @relation(name: "votesAgainst", fields: [votedAgainst], references: [id])
   votedAgainst         Int
+
+  @@index([votedFor])
+  @@index([votedAgainst])
 }
 
 model Pokemon {

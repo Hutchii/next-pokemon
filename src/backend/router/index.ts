@@ -10,8 +10,20 @@ export const appRouter = trpc
     async resolve({ input }) {
       const pokemon = await prisma.pokemon.findFirst({
         where: { id: input.id },
+        select: {
+          id: true,
+          name: true,
+          spriteUrl: true,
+          _count: {
+            select: {
+              VoteFor: true,
+              VoteAgainst: true,
+            },
+          },
+        },
       });
       if (!pokemon) throw new Error("Pokemon not found");
+      console.log(pokemon);
       return pokemon;
     },
   })

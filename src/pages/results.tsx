@@ -24,7 +24,7 @@ const PokemonListing: React.FC<{ pokemon: PokemonQueryResult[number] }> = ({
         height={64}
       />
       <div className="capitalize">{pokemon.name}</div>
-      <div className="capitalize">{generateCountPercent(pokemon) + "%"}</div>
+      <div className="capitalize">{generateCountPercent(pokemon).toFixed(2) + "%"}</div>
     </div>
   );
 };
@@ -36,9 +36,11 @@ const Results: React.FC<{
     <div className="flex flex-col items-center">
       <h1 className="text-2xl p-4">Results:</h1>
       <div className="flex flex-col w-full max-w-2xl border">
-        {props.pokemon.map((p) => (
-          <PokemonListing pokemon={p} key={p.id} />
-        ))}
+        {props.pokemon
+          .sort((a, b) => generateCountPercent(b) - generateCountPercent(a))
+          .map((p) => (
+            <PokemonListing pokemon={p} key={p.id} />
+          ))}
       </div>
     </div>
   );
