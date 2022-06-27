@@ -13,8 +13,18 @@ datasource db {
 }
 
 model Vote {
-  id           String   @id @default(cuid())
-  createdAt    DateTime @default(now())
-  votedFor     Int
-  votedAgainst Int
+  id                   String   @id @default(cuid())
+  createdAt            DateTime @default(now())
+  votedForRelation     Pokemon  @relation(name: "votesFor", fields: [votedFor], references: [id])
+  votedFor             Int
+  votedAgainstRelation Pokemon  @relation(name: "votesAgainst", fields: [votedAgainst], references: [id])
+  votedAgainst         Int
+}
+
+model Pokemon {
+  id          Int    @id
+  name        String
+  spriteUrl   String
+  VoteFor     Vote[] @relation("votesFor")
+  VoteAgainst Vote[] @relation("votesAgainst")
 }

@@ -61,9 +61,9 @@ const PokemonListing: React.FC<{
   return (
     <div className="w-64 h-64 bg-blue-800 text-center">
       <Image
-        src={pokemon.sprites.front_default as string}
-        alt="First pokemon"
-        className="w-full"
+        src={pokemon.spriteUrl}
+        // src={pokemon.spriteUrl as string}
+        alt="Pokemon"
         width={256}
         height={256}
         layout="fixed"
