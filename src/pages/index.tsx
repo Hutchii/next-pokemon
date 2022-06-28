@@ -72,7 +72,7 @@ const PokemonListing: React.FC<{
   even: boolean;
   isLoading: boolean;
 }> = ({ pokemon, vote, even, isLoading }) => {
-  const loaded = Boolean(!isLoading && pokemon);
+  const loaded = !isLoading && pokemon;
 
   const generateCountPercent = (pokemon: PokemonFromServer) => {
     const { VoteFor, VoteAgainst } = pokemon._count;
@@ -88,7 +88,7 @@ const PokemonListing: React.FC<{
             : "drop-shadow-[0_0_100px_#8400ff90]"
         }`}
       >
-        {/* {dataLoaded ? (
+        {!loaded ? (
           <Image
             src={pokemon.spriteUrl}
             alt="Pokemon"
@@ -97,54 +97,38 @@ const PokemonListing: React.FC<{
             layout="fixed"
             quality={90}
           />
-        ) : ( */}
-
-        {/* <Fade show={loaded}>
-          <Image
-            src={pokemon.spriteUrl}
-            alt="Pokemon"
-            width={256}
-            height={256}
-            layout="fixed"
-            quality={90}
-          />
-        </Fade> */}
-        <Transition
-          show={loaded}
-          enter="transition-opacity duration-1000"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="transition-opacity duration-1000"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <p>{pokemon!?.name}</p>
-        </Transition>
-        {/* <Transition
-          show={!loaded}
-          enter="transition-opacity duration-1000"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="transition-opacity duration-1000"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <p className="z-10">2</p>
-        </Transition> */}
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <Image
+              src="/svg/spinner.svg"
+              alt="Spinner"
+              width={64}
+              height={64}
+            />
+          </div>
+        )}
       </div>
       <div className="bg-[#111111de] rounded-3xl h-[300px] mt-[-80px] px-6 font-semibold text-white">
-        {/* <h1 className="pt-[75px] capitalize text-3xl mb-6">{pokemon.name}</h1>
-        <div className="text-lg flex justify-between items-center">
-          <p>Percent:</p>
-          <p className="text-gray-400">{generateCountPercent(pokemon) + "%"}</p>
-          <div className="relative w-40 h-4">
-            <div className="bg-gray-500 rounded-full w-40 h-4"></div>
-            <div
-              className="absolute inset-0 bg-white rounded-full h-4 z-10"
-              style={{ width: `${+generateCountPercent(pokemon)}%` }}
-            ></div>
-          </div>
-        </div> */}
+        {loaded && (
+          <>
+            <h1 className="pt-[75px] capitalize text-3xl mb-6">
+              {pokemon.name}
+            </h1>
+            <div className="text-lg flex justify-between items-center">
+              <p>Percent:</p>
+              <p className="text-gray-400">
+                {generateCountPercent(pokemon) + "%"}
+              </p>
+              <div className="relative w-40 h-4">
+                <div className="bg-gray-500 rounded-full w-40 h-4"></div>
+                <div
+                  className="absolute inset-0 bg-white rounded-full h-4 z-10"
+                  style={{ width: `${+generateCountPercent(pokemon)}%` }}
+                ></div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
       <button
         className="p-2 mt-5 text-white font-semibold text-lg rounded-full bg-transparent px-6 border"
