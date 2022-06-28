@@ -11,6 +11,7 @@
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\""
   },
   "dependencies": {
+    "@headlessui/react": "^1.6.5",
     "@prisma/client": "^3.15.2",
     "@trpc/client": "^9.25.3",
     "@trpc/next": "^9.25.3",
@@ -21,6 +22,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-query": "^3.39.1",
+    "react-transition-group": "^4.4.2",
     "zod": "^3.17.3"
   },
   "devDependencies": {

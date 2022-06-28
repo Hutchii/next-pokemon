@@ -6,6 +6,8 @@ import Image from "next/image";
 import { inferQueryResponse } from "./api/trpc/[trpc]";
 import type React from "react";
 import { AsyncReturnType } from "@/backend/utils/ts-bs";
+import { Transition } from "@headlessui/react";
+import Fade from "@/utils/animate";
 
 const Home: NextPage = () => {
   const [ids, updateIds] = useState(getOptionsForVote());
@@ -24,11 +26,12 @@ const Home: NextPage = () => {
     updateIds(getOptionsForVote());
   };
 
-  const dataLoaded =
+  const dataLoaded = Boolean(
     !firstPokemon.isLoading &&
-    !secondPokemon.isLoading &&
-    firstPokemon.data &&
-    secondPokemon.data;
+      firstPokemon.data &&
+      !secondPokemon.isLoading &&
+      secondPokemon.data
+  );
 
   return (
     <div className="relative h-screen w-screen flex flex-col justify-center items-center">
@@ -39,26 +42,21 @@ const Home: NextPage = () => {
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-gray-900 via-[#18181800] to-gray-900" />
       <div className="text-2xl text-center">Which pokemon is rounder?</div>
       <div className="p-2"></div>
-      {!dataLoaded && (
-        <div className="z-10">
-          <Image src="/svg/spinner.svg" alt="Spinner" width={57} height={57} />
-        </div>
-      )}
-      {dataLoaded && (
-        <div className="p-8 flex justify-between items-center z-10">
-          <PokemonListing
-            pokemon={firstPokemon.data}
-            vote={() => voteForRoundest(first)}
-            even={true}
-          />
-          <div className="p-8">Vs</div>
-          <PokemonListing
-            pokemon={secondPokemon.data}
-            vote={() => voteForRoundest(second)}
-            even={false}
-          />
-        </div>
-      )}
+      <div className="p-8 flex justify-between items-center z-10">
+        <PokemonListing
+          pokemon={firstPokemon.data}
+          vote={() => voteForRoundest(first)}
+          even={true}
+          isLoading={firstPokemon.isLoading}
+        />
+        <div className="p-8 font-semibold text-2xl mt-20">vs</div>
+        <PokemonListing
+          pokemon={secondPokemon.data}
+          vote={() => voteForRoundest(second)}
+          even={false}
+          isLoading={secondPokemon.isLoading}
+        />
+      </div>
     </div>
   );
 };
@@ -69,36 +67,73 @@ type PokemonFromServer = inferQueryResponse<"get-pokemon-by-id">;
 
 //Because of React.FC props.children exist, it`s a consequence of using React.FC, if we don`t return JSX we get error.
 const PokemonListing: React.FC<{
-  pokemon: PokemonFromServer;
+  pokemon: PokemonFromServer | undefined;
   vote: () => void;
   even: boolean;
-}> = ({ pokemon, vote, even }) => {
+  isLoading: boolean;
+}> = ({ pokemon, vote, even, isLoading }) => {
+  const loaded = Boolean(!isLoading && pokemon);
+
   const generateCountPercent = (pokemon: PokemonFromServer) => {
     const { VoteFor, VoteAgainst } = pokemon._count;
     if (VoteFor + VoteAgainst === 0) return 0;
     return ((VoteFor / (VoteFor + VoteAgainst)) * 100).toFixed(2);
-    // return `${(VoteFor / (VoteFor + VoteAgainst)) * 100}%`;
   };
   return (
     <div className="text-center w-[400px]">
       <div
-        className={
+        className={`w-64 h-64 m-auto ${
           even
             ? "drop-shadow-[0_0_100px_#3700ffb9]"
             : "drop-shadow-[0_0_100px_#8400ff90]"
-        }
+        }`}
       >
-        <Image
-          src={pokemon.spriteUrl}
-          alt="Pokemon"
-          width={256}
-          height={256}
-          layout="fixed"
-          quality={90}
-        />
+        {/* {dataLoaded ? (
+          <Image
+            src={pokemon.spriteUrl}
+            alt="Pokemon"
+            width={256}
+            height={256}
+            layout="fixed"
+            quality={90}
+          />
+        ) : ( */}
+
+        {/* <Fade show={loaded}>
+          <Image
+            src={pokemon.spriteUrl}
+            alt="Pokemon"
+            width={256}
+            height={256}
+            layout="fixed"
+            quality={90}
+          />
+        </Fade> */}
+        <Transition
+          show={loaded}
+          enter="transition-opacity duration-1000"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transition-opacity duration-1000"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <p>{pokemon!?.name}</p>
+        </Transition>
+        {/* <Transition
+          show={!loaded}
+          enter="transition-opacity duration-1000"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transition-opacity duration-1000"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <p className="z-10">2</p>
+        </Transition> */}
       </div>
       <div className="bg-[#111111de] rounded-3xl h-[300px] mt-[-80px] px-6 font-semibold text-white">
-        <h1 className="pt-[75px] capitalize text-3xl mb-6">{pokemon.name}</h1>
+        {/* <h1 className="pt-[75px] capitalize text-3xl mb-6">{pokemon.name}</h1>
         <div className="text-lg flex justify-between items-center">
           <p>Percent:</p>
           <p className="text-gray-400">{generateCountPercent(pokemon) + "%"}</p>
@@ -109,7 +144,7 @@ const PokemonListing: React.FC<{
               style={{ width: `${+generateCountPercent(pokemon)}%` }}
             ></div>
           </div>
-        </div>
+        </div> */}
       </div>
       <button
         className="p-2 mt-5 text-white font-semibold text-lg rounded-full bg-transparent px-6 border"
@@ -120,3 +155,11 @@ const PokemonListing: React.FC<{
     </div>
   );
 };
+
+const PokemonPlaceholder = () => {
+  return <div className="text-center w-[400px] text-white z-10">asdasd</div>;
+};
+
+{
+  /* <Image src="/svg/spinner.svg" alt="Spinner" width={80} height={80} /> */
+}

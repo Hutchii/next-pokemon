@@ -23,7 +23,6 @@ export const appRouter = trpc
         },
       });
       if (!pokemon) throw new Error("Pokemon not found");
-      console.log(pokemon);
       return pokemon;
     },
   })
