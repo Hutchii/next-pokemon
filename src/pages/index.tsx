@@ -88,7 +88,7 @@ const PokemonListing: React.FC<{
             : "drop-shadow-[0_0_100px_#8400ff90]"
         }`}
       >
-        {!loaded ? (
+        {loaded ? (
           <Image
             src={pokemon.spriteUrl}
             alt="Pokemon"
