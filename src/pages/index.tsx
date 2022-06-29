@@ -121,6 +121,7 @@ const PokemonListing: React.FC<{
       <button
         className="p-2 mt-5 text-white font-semibold text-lg rounded-full bg-transparent px-6 border"
         onClick={() => vote()}
+        disabled={disabled}
       >
         Cast your vote
       </button>
