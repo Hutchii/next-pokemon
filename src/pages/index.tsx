@@ -58,9 +58,9 @@ const Home: NextPage = () => {
           />
         </div>
       )}
-      {!pokemonPair && (
+      {/* {!pokemonPair && (
         <Image src="/svg/spinner.svg" width={100} height={100} alt="Spinner" />
-      )}
+      )} */}
     </main>
   );
 };
