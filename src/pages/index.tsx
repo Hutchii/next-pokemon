@@ -82,14 +82,14 @@ const PokemonListing: React.FC<{
     return ((VoteFor / (VoteFor + VoteAgainst)) * 100).toFixed(2);
   };
   return (
-    <div className="text-center w-[400px]">
+    <div className={`text-center w-[400px] ${disabled && "opacity-0"} transition-opacity`} key={pokemon.id}>
       <div
-        key={pokemon.id}
+        
         className={`w-64 h-64 m-auto ${
           even
             ? "drop-shadow-[0_0_100px_#3700ffb9]"
             : "drop-shadow-[0_0_100px_#8400ff90]"
-        } ${disabled && "opacity-0"} transition-opacity`}
+        }`}
       >
         <Image
           src={pokemon.spriteUrl}
@@ -97,6 +97,7 @@ const PokemonListing: React.FC<{
           width={256}
           height={256}
           layout="fixed"
+          className="animate-fade-in"
           quality={90}
         />
       </div>
