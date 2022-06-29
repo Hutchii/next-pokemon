@@ -1,134 +1,122 @@
 import type { NextPage } from "next";
-import { getOptionsForVote } from "@/utils/getRandomPokemon";
 import { trpc } from "@/utils/trpc";
-import { useState } from "react";
 import Image from "next/image";
 import { inferQueryResponse } from "./api/trpc/[trpc]";
 import type React from "react";
-import { AsyncReturnType } from "@/backend/utils/ts-bs";
-import { Transition } from "@headlessui/react";
-import Fade from "@/utils/animate";
+import Background from "@/components/UI/Background";
 
 const Home: NextPage = () => {
-  const [ids, updateIds] = useState(getOptionsForVote());
-  const [first, second] = ids;
-  const firstPokemon = trpc.useQuery(["get-pokemon-by-id", { id: first }]);
-  const secondPokemon = trpc.useQuery(["get-pokemon-by-id", { id: second }]);
+  const {
+    data: pokemonPair,
+    refetch,
+    isLoading,
+  } = trpc.useQuery(["get-pokemon-pair"], {
+    refetchInterval: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
 
   const voteMutation = trpc.useMutation(["cast-vote"]);
 
   const voteForRoundest = (selected: number) => {
-    if (selected === first) {
-      voteMutation.mutate({ votedFor: first, votedAgainst: second });
+    if (!pokemonPair) return;
+    if (selected === pokemonPair?.firstPokemon.id) {
+      voteMutation.mutate({
+        votedFor: pokemonPair.firstPokemon.id,
+        votedAgainst: pokemonPair.secondPokemon.id,
+      });
     } else {
-      voteMutation.mutate({ votedFor: second, votedAgainst: first });
+      voteMutation.mutate({
+        votedFor: pokemonPair.secondPokemon.id,
+        votedAgainst: pokemonPair.firstPokemon.id,
+      });
     }
-    updateIds(getOptionsForVote());
+    refetch();
   };
 
-  const dataLoaded = Boolean(
-    !firstPokemon.isLoading &&
-      firstPokemon.data &&
-      !secondPokemon.isLoading &&
-      secondPokemon.data
-  );
+  const fetchingNext = voteMutation.isLoading || isLoading;
 
   return (
-    <div className="relative h-screen w-screen flex flex-col justify-center items-center">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-rose-600 " />
-      <div className="pointer-events-none absolute inset-0 bg-radial-content-shadow" />
-      <div className="bg-[url('/svg/bg.svg')] pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-gray-900 via-[#18181800] to-gray-900" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-gray-900 via-[#18181800] to-gray-900" />
+    <main className="relative h-screen w-screen flex flex-col justify-center items-center">
+      <Background />
       <div className="text-2xl text-center">Which pokemon is rounder?</div>
       <div className="p-2"></div>
-      <div className="p-8 flex justify-between items-center z-10">
-        <PokemonListing
-          pokemon={firstPokemon.data}
-          vote={() => voteForRoundest(first)}
-          even={true}
-          isLoading={firstPokemon.isLoading}
-        />
-        <div className="p-8 font-semibold text-2xl mt-20">vs</div>
-        <PokemonListing
-          pokemon={secondPokemon.data}
-          vote={() => voteForRoundest(second)}
-          even={false}
-          isLoading={secondPokemon.isLoading}
-        />
-      </div>
-    </div>
+      {pokemonPair && (
+        <div className="p-8 flex justify-between items-center z-10">
+          <PokemonListing
+            pokemon={pokemonPair?.firstPokemon}
+            vote={() => voteForRoundest(pokemonPair.secondPokemon.id)}
+            even={true}
+            disabled={fetchingNext}
+          />
+          <div className="p-8 font-semibold text-2xl mt-20">vs</div>
+          <PokemonListing
+            pokemon={pokemonPair?.secondPokemon}
+            vote={() => voteForRoundest(pokemonPair?.secondPokemon.id)}
+            even={false}
+            disabled={fetchingNext}
+          />
+        </div>
+      )}
+      {!pokemonPair && (
+        <Image src="/svg/spinner.svg" width={100} height={100} alt="Spinner" />
+      )}
+    </main>
   );
 };
 
 export default Home;
 
-type PokemonFromServer = inferQueryResponse<"get-pokemon-by-id">;
+type PokemonFromServer = inferQueryResponse<"get-pokemon-pair">["firstPokemon"];
 
 //Because of React.FC props.children exist, it`s a consequence of using React.FC, if we don`t return JSX we get error.
 const PokemonListing: React.FC<{
-  pokemon: PokemonFromServer | undefined;
+  pokemon: PokemonFromServer;
   vote: () => void;
   even: boolean;
-  isLoading: boolean;
-}> = ({ pokemon, vote, even, isLoading }) => {
-  const loaded = !isLoading && pokemon;
-
+  disabled: boolean;
+}> = ({ pokemon, vote, even, disabled }) => {
   const generateCountPercent = (pokemon: PokemonFromServer) => {
     const { VoteFor, VoteAgainst } = pokemon._count;
     if (VoteFor + VoteAgainst === 0) return 0;
     return ((VoteFor / (VoteFor + VoteAgainst)) * 100).toFixed(2);
   };
   return (
-    <div className="text-center w-[400px]">
+    <div className="text-center w-[400px]" key={pokemon.id}>
       <div
         className={`w-64 h-64 m-auto ${
           even
             ? "drop-shadow-[0_0_100px_#3700ffb9]"
             : "drop-shadow-[0_0_100px_#8400ff90]"
-        }`}
+        } ${disabled && "opacity-0"}`}
       >
-        {loaded ? (
-          <Image
-            src={pokemon.spriteUrl}
-            alt="Pokemon"
-            width={256}
-            height={256}
-            layout="fixed"
-            quality={90}
-          />
-        ) : (
-          <div className="flex items-center justify-center h-full">
-            <Image
-              src="/svg/spinner.svg"
-              alt="Spinner"
-              width={64}
-              height={64}
-            />
-          </div>
-        )}
+        <Image
+          src={pokemon.spriteUrl}
+          alt="Pokemon"
+          width={256}
+          height={256}
+          layout="fixed"
+          quality={90}
+          className="animate-fade-in"
+        />
       </div>
       <div className="bg-[#111111de] rounded-3xl h-[300px] mt-[-80px] px-6 font-semibold text-white">
-        {loaded && (
-          <>
-            <h1 className="pt-[75px] capitalize text-3xl mb-6">
-              {pokemon.name}
-            </h1>
-            <div className="text-lg flex justify-between items-center">
-              <p>Percent:</p>
-              <p className="text-gray-400">
-                {generateCountPercent(pokemon) + "%"}
-              </p>
-              <div className="relative w-40 h-4">
-                <div className="bg-gray-500 rounded-full w-40 h-4"></div>
-                <div
-                  className="absolute inset-0 bg-white rounded-full h-4 z-10"
-                  style={{ width: `${+generateCountPercent(pokemon)}%` }}
-                ></div>
-              </div>
+        <div className={`${disabled && "opacity-0"}`}>
+          <h1 className="pt-[75px] capitalize text-3xl mb-6">{pokemon.name}</h1>
+          <div className="text-lg flex justify-between items-center">
+            <p>Percent:</p>
+            <p className="text-gray-400">
+              {generateCountPercent(pokemon) + "%"}
+            </p>
+            <div className="relative w-40 h-4">
+              <div className="bg-gray-500 rounded-full w-40 h-4"></div>
+              <div
+                className="absolute inset-0 bg-white rounded-full h-4 z-10"
+                style={{ width: `${+generateCountPercent(pokemon)}%` }}
+              ></div>
             </div>
-          </>
-        )}
+          </div>
+        </div>
       </div>
       <button
         className="p-2 mt-5 text-white font-semibold text-lg rounded-full bg-transparent px-6 border"

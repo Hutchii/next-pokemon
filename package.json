@@ -17,10 +17,10 @@
     "@trpc/next": "^9.25.3",
     "@trpc/react": "^9.25.3",
     "@trpc/server": "^9.25.3",
-    "next": "12.1.6",
+    "next": "^12.2.0",
     "pokenode-ts": "^1.14.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-query": "^3.39.1",
     "react-transition-group": "^4.4.2",
     "zod": "^3.17.3"
