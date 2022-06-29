@@ -89,7 +89,7 @@ const PokemonListing: React.FC<{
           even
             ? "drop-shadow-[0_0_100px_#3700ffb9]"
             : "drop-shadow-[0_0_100px_#8400ff90]"
-        } ${disabled && "opacity-0"}`}
+        } ${disabled && "opacity-0"} transition-opacity`}
       >
         <Image
           src={pokemon.spriteUrl}
@@ -101,7 +101,7 @@ const PokemonListing: React.FC<{
         />
       </div>
       <div className="bg-[#111111de] rounded-3xl h-[300px] mt-[-80px] px-6 font-semibold text-white">
-        <div className={`${disabled && "opacity-0"} animate-fade-in`} key={pokemon.id}>
+        <div>
           <h1 className="pt-[75px] capitalize text-3xl mb-6">{pokemon.name}</h1>
           <div className="text-lg flex justify-between items-center">
             <p>Percent:</p>
