@@ -82,7 +82,7 @@ const PokemonListing: React.FC<{
     return ((VoteFor / (VoteFor + VoteAgainst)) * 100).toFixed(2);
   };
   return (
-    <div className={`text-center w-[400px] ${disabled && "opacity-0"} transition-opacity`} key={pokemon.id}>
+    <div className={`text-center w-[400px]`} key={pokemon.id}>
       <div
         
         className={`w-64 h-64 m-auto ${
@@ -97,7 +97,6 @@ const PokemonListing: React.FC<{
           width={256}
           height={256}
           layout="fixed"
-          className="animate-fade-in"
           quality={90}
         />
       </div>
