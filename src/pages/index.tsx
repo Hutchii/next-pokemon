@@ -4,6 +4,7 @@ import Image from "next/image";
 import { inferQueryResponse } from "./api/trpc/[trpc]";
 import type React from "react";
 import Background from "@/components/UI/Background";
+import { useState } from "react";
 
 const Home: NextPage = () => {
   const {
@@ -35,7 +36,7 @@ const Home: NextPage = () => {
   };
 
   const fetchingNext = voteMutation.isLoading || isLoading;
-
+  console.log(fetchingNext);
   return (
     <main className="relative h-screen w-screen flex flex-col justify-center items-center">
       <Background />
@@ -90,28 +91,20 @@ const PokemonListing: React.FC<{
             : "drop-shadow-[0_0_100px_#8400ff90]"
         }`}
       >
-        <Image
-          src={pokemon.spriteUrl}
-          alt="Pokemon"
-          width={256}
-          height={256}
-          layout="fixed"
-          quality={90}
-          className="animate-fade-in"
-        />
+        <PokemonImage image={pokemon.spriteUrl} />
       </div>
       <div className="bg-[#111111de] rounded-3xl h-[300px] mt-[-80px] px-6 font-semibold text-white">
-        <div className="animate-fade-in">
+        <div className="">
           <h1 className="pt-[75px] capitalize text-3xl mb-6">{pokemon.name}</h1>
           <div className="text-lg flex justify-between items-center">
             <p>Percent:</p>
-            <p className="text-gray-400">
+            <p className="text-gray-400 animate-fade-in">
               {generateCountPercent(pokemon) + "%"}
             </p>
             <div className="relative w-40 h-4">
               <div className="bg-gray-500 rounded-full w-40 h-4"></div>
               <div
-                className="absolute inset-0 bg-white rounded-full h-4 z-10"
+                className="animate-fade-in absolute inset-0 bg-white rounded-full h-4 z-10"
                 style={{ width: `${+generateCountPercent(pokemon)}%` }}
               ></div>
             </div>
@@ -126,5 +119,21 @@ const PokemonListing: React.FC<{
         Cast your vote
       </button>
     </div>
+  );
+};
+
+const PokemonImage = ({ image }: { image: string }): JSX.Element => {
+  const [startAnimation, setStartAnimationuseState] = useState(false);
+  return (
+    <Image
+      src={image}
+      alt="Pokemon"
+      width={256}
+      height={256}
+      layout="fixed"
+      quality={90}
+      className={`opacity-0 ${startAnimation && "animate-fade-in"}`}
+      onLoadingComplete={() => setStartAnimationuseState(true)}
+    />
   );
 };
