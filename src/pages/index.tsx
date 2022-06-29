@@ -82,8 +82,9 @@ const PokemonListing: React.FC<{
     return ((VoteFor / (VoteFor + VoteAgainst)) * 100).toFixed(2);
   };
   return (
-    <div className="text-center w-[400px]" key={pokemon.id}>
+    <div className="text-center w-[400px]">
       <div
+        key={pokemon.id}
         className={`w-64 h-64 m-auto ${
           even
             ? "drop-shadow-[0_0_100px_#3700ffb9]"
@@ -97,11 +98,10 @@ const PokemonListing: React.FC<{
           height={256}
           layout="fixed"
           quality={90}
-          className="animate-fade-in"
         />
       </div>
       <div className="bg-[#111111de] rounded-3xl h-[300px] mt-[-80px] px-6 font-semibold text-white">
-        <div className={`${disabled && "opacity-0"}`}>
+        <div className={`${disabled && "opacity-0"} animate-fade-in`} key={pokemon.id}>
           <h1 className="pt-[75px] capitalize text-3xl mb-6">{pokemon.name}</h1>
           <div className="text-lg flex justify-between items-center">
             <p>Percent:</p>
@@ -127,11 +127,3 @@ const PokemonListing: React.FC<{
     </div>
   );
 };
-
-const PokemonPlaceholder = () => {
-  return <div className="text-center w-[400px] text-white z-10">asdasd</div>;
-};
-
-{
-  /* <Image src="/svg/spinner.svg" alt="Spinner" width={80} height={80} /> */
-}
