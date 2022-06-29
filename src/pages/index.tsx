@@ -36,11 +36,10 @@ const Home: NextPage = () => {
   };
 
   const fetchingNext = voteMutation.isLoading || isLoading;
-  console.log(fetchingNext);
   return (
     <main className="relative h-screen w-screen flex flex-col justify-center items-center">
       <Background />
-      <div className="text-2xl text-center">Which pokemon is rounder?</div>
+      <div className="text-[50px] text-center z-10 mb-10 font-bold">Which <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-fuchsia-600">pokemon</span> wins?</div>
       <div className="p-2"></div>
       {pokemonPair && (
         <div className="p-8 flex justify-between items-center z-10 animate-fade-in">
@@ -93,9 +92,9 @@ const PokemonListing: React.FC<{
       >
         <PokemonImage image={pokemon.spriteUrl} />
       </div>
-      <div className="bg-[#111111de] rounded-3xl h-[300px] mt-[-80px] px-6 font-semibold text-white">
-        <div className="">
-          <h1 className="pt-[75px] capitalize text-3xl mb-6">{pokemon.name}</h1>
+      <div className="bg-[#111111de] rounded-3xl h-[280px] mt-[-80px] px-6 font-semibold text-white">
+        <div>
+          <h1 className="pt-[85px] capitalize text-3xl mb-6">{pokemon.name}</h1>
           <div className="text-lg flex justify-between items-center">
             <p>Percent:</p>
             <p className="text-gray-400 animate-fade-in">
@@ -109,21 +108,21 @@ const PokemonListing: React.FC<{
               ></div>
             </div>
           </div>
+          <button
+            className="py-2 mt-8 text-white font-semibold text-md rounded-full bg-transparent px-6 border-white border-[1px] transition-colors"
+            onClick={() => vote()}
+            disabled={disabled}
+          >
+            Cast your vote
+          </button>
         </div>
       </div>
-      <button
-        className="p-2 mt-5 text-white font-semibold text-lg rounded-full bg-transparent px-6 border"
-        onClick={() => vote()}
-        disabled={disabled}
-      >
-        Cast your vote
-      </button>
     </div>
   );
 };
 
 const PokemonImage = ({ image }: { image: string }): JSX.Element => {
-  const [startAnimation, setStartAnimationuseState] = useState(false);
+  const [startAnimation, setStartAnimation] = useState(false);
   return (
     <Image
       src={image}
@@ -133,7 +132,7 @@ const PokemonImage = ({ image }: { image: string }): JSX.Element => {
       layout="fixed"
       quality={90}
       className={`opacity-0 ${startAnimation && "animate-fade-in"}`}
-      onLoadingComplete={() => setStartAnimationuseState(true)}
+      onLoadingComplete={() => setStartAnimation(true)}
     />
   );
 };
