@@ -42,7 +42,7 @@ const Home: NextPage = () => {
       <div className="text-2xl text-center">Which pokemon is rounder?</div>
       <div className="p-2"></div>
       {pokemonPair && (
-        <div className="p-8 flex justify-between items-center z-10">
+        <div className="p-8 flex justify-between items-center z-10 animate-fade-in">
           <PokemonListing
             pokemon={pokemonPair?.firstPokemon}
             vote={() => voteForRoundest(pokemonPair.secondPokemon.id)}
@@ -84,7 +84,6 @@ const PokemonListing: React.FC<{
   return (
     <div className={`text-center w-[400px]`} key={pokemon.id}>
       <div
-        
         className={`w-64 h-64 m-auto ${
           even
             ? "drop-shadow-[0_0_100px_#3700ffb9]"
@@ -98,10 +97,11 @@ const PokemonListing: React.FC<{
           height={256}
           layout="fixed"
           quality={90}
+          className="animate-fade-in"
         />
       </div>
       <div className="bg-[#111111de] rounded-3xl h-[300px] mt-[-80px] px-6 font-semibold text-white">
-        <div>
+        <div className="animate-fade-in">
           <h1 className="pt-[75px] capitalize text-3xl mb-6">{pokemon.name}</h1>
           <div className="text-lg flex justify-between items-center">
             <p>Percent:</p>
