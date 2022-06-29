@@ -14,7 +14,8 @@ html {
 }
 
 body {
-  @apply text-white;
+  @apply text-white min-h-screen;
+  position: relative;
 }
 
 a {

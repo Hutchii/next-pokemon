@@ -1,12 +1,27 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
+import Head from "next/head";
+import Header from "@/components/Header/Header";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <>
+      <Head>
+        <meta
+          name="viewport"
+          content="width=device-width, minimum-scale=1, initial-scale=1, shrink-to-fit=no"
+        />
+      </Head>
+      <Header />
+      <Component {...pageProps} />
+      <Background />
+    </>
+  );
 }
 
 import { withTRPC } from "@trpc/next";
 import type { AppRouter } from "@/backend/router";
+import Background from "@/components/UI/Background";
 
 function getBaseUrl() {
   if (typeof window) return "";
