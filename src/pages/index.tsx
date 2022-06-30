@@ -39,14 +39,14 @@ const Home: NextPage = () => {
     <main className="text-center flex flex-col justify-center items-center min-h-[calc(100vh-10rem)] px-[2rem] mx-auto pb-20">
       {pokemonPair && (
         <>
-          <div className="mt-20 text-3xl sm:text-4xl lg:text-5xl mb-8 lg:mb-20 font-bold animate-fade-in">
+          <h1 className="mt-10 text-3xl sm:mt-20 sm:text-4xl lg:text-5xl mb-8 lg:mb-20 font-bold animate-fade-in">
             Which
             <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-fuchsia-600">
               {" "}
               pokemon
             </span>{" "}
             wins?
-          </div>
+          </h1>
           <div className="w-full sm:w-[unset] lg:flex lg:justify-between lg:items-center animate-fade-in">
             <PokemonListing
               pokemon={pokemonPair?.firstPokemon}
@@ -98,7 +98,7 @@ const PokemonListing: React.FC<{
       >
         <PokemonImage image={pokemon.spriteUrl} />
       </div>
-      <div className="bg-[#111111de] rounded-3xl h-72 -mt-20 px-6 font-semibold text-white sm:w-[400px]">
+      <div className="bg-[#111111de] rounded-3xl h-72 -mt-20 px-6 font-semibold text-violet-100 sm:w-[400px]">
         <h1 className="pt-24 capitalize text-3xl mb-6 animate-fade-in">
           {pokemon.name}
         </h1>
@@ -108,15 +108,15 @@ const PokemonListing: React.FC<{
             {generateCountPercent(pokemon) + "%"}
           </p>
           <div className="relative w-32">
-            <div className="bg-gray-500 rounded-full w-full h-4"/>
+            <div className="bg-gray-300 rounded-full w-full h-4 opacity-50" />
             <div
-              className="animate-fade-in absolute inset-0 bg-white rounded-full h-4"
+              className="animate-fade-in absolute inset-0 bg-violet-100 rounded-full h-4"
               style={{ width: `${+generateCountPercent(pokemon)}%` }}
             />
           </div>
         </div>
         <button
-          className="py-2 px-6 mt-8 text-white text-md rounded-full bg-transparent border-white border-[1px]"
+          className="py-2 px-6 mt-8 text-md rounded-full bg-transparent border-violet-100 border-[1px] focus:outline-none focus:ring-1 focus:ring-violet-200"
           onClick={() => vote()}
           disabled={disabled}
         >

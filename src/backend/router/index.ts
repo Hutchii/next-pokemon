@@ -7,25 +7,6 @@ import { prisma } from "../utils/prisma";
 export const appRouter = trpc
   .router()
   .query("get-pokemon-pair", {
-    // input: z.object({ id: z.number() }),
-    // async resolve({ input }) {
-    //   const pokemon = await prisma.pokemon.findFirst({
-    //     where: { id: input.id },
-    //     select: {
-    //       id: true,
-    //       name: true,
-    //       spriteUrl: true,
-    //       _count: {
-    //         select: {
-    //           VoteFor: true,
-    //           VoteAgainst: true,
-    //         },
-    //       },
-    //     },
-    //   });
-    //   if (!pokemon) throw new Error("Pokemon not found");
-    //   return pokemon;
-    // },
     async resolve() {
       const [first, second] = getOptionsForVote();
       const bothPokemon = await prisma.pokemon.findMany({
