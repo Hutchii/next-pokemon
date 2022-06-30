@@ -14,8 +14,9 @@ const Home: NextPage = () => {
     refetchInterval: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
-
+  console.log(pokemonPair);
   const voteMutation = trpc.useMutation(["cast-vote"]);
 
   const voteForRoundest = (selected: number) => {
