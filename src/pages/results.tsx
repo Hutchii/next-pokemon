@@ -74,7 +74,7 @@ const Results: React.FC<{
             return difference;
           })
           .map((p, index) => (
-            <PokemonListing pokemon={p} key={p.id + index} place={index + 1} />
+            <PokemonListing pokemon={p} key={p.name} place={index + 1} />
           ))
           .slice((page - 1) * 10, page * 10)}
       </div>

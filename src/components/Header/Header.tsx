@@ -6,7 +6,7 @@ const Header = () => {
       <nav className="flex items-center justify-between h-full">
         <p>Logo</p>
         <ul className="flex items-center gap-12">
-          {/* <li className="text-fuchsia-600">Sign in</li> */}
+          <li className="text-fuchsia-600">Sign in</li>
           <Link href="/">
             <a>
               <li>Vote</li>
@@ -17,8 +17,11 @@ const Header = () => {
               <li>Results</li>
             </a>
           </Link>
-          {/* <li>Pokedex</li>
-          <li>About</li> */}
+          <Link href="/pokedex">
+            <a>
+              <li>Pokedex</li>
+            </a>
+          </Link>
         </ul>
       </nav>
     </header>

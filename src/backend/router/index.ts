@@ -1,7 +1,6 @@
 import { getOptionsForVote } from "@/utils/getRandomPokemon";
 import * as trpc from "@trpc/server";
 import { z } from "zod";
-
 import { prisma } from "../utils/prisma";
 
 export const appRouter = trpc
@@ -39,6 +38,16 @@ export const appRouter = trpc
         },
       });
       return { success: true, vote: voteInDb };
+    },
+  })
+  .query("filter-pokemon", {
+    input: z.string(),
+    async resolve({ input }) {
+      const filteredPokemon = await prisma.pokemon.findMany({
+        where: { name: { contains: input } },
+      });
+      if (!filteredPokemon) throw new Error("No results!");
+      return filteredPokemon;
     },
   });
 

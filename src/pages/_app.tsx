@@ -2,6 +2,7 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import Header from "@/components/Header/Header";
+import Background from "@/components/UI/Background";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -21,7 +22,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 
 import { withTRPC } from "@trpc/next";
 import type { AppRouter } from "@/backend/router";
-import Background from "@/components/UI/Background";
 
 function getBaseUrl() {
   if (typeof window) return "";
