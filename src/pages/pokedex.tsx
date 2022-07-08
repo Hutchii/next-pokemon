@@ -30,7 +30,7 @@ function reducer(state: typeof initialState, action: ACTIONTYPE) {
 
 const Pokedex = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { data } = trpc.useQuery(["filter-pokemon", { search: "s" }]);
+  const { data, refetch } = trpc.useQuery(["filter-pokemon", { search: state.search }]);
   // const { data } = trpc.useQuery([
   //   "filter-pokemon",
   //   { search: state.search },
@@ -88,7 +88,7 @@ export const getStaticProps: GetStaticProps = async () => {
   //   revalidate: 60,
   // };
 
-  await ssg.fetchQuery("filter-pokemon", { search: "s" });
+  await ssg.fetchQuery("filter-pokemon", { search: "" });
 
   return {
     props: {
