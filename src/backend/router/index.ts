@@ -41,10 +41,13 @@ export const appRouter = trpc
     },
   })
   .query("filter-pokemon", {
-    input: z.string(),
+    input: z.object({
+      // filter: z.number(),
+      search: z.string(),
+    }),
     async resolve({ input }) {
       const filteredPokemon = await prisma.pokemon.findMany({
-        where: { name: { contains: input } },
+        where: { name: { contains: input.search }},
       });
       if (!filteredPokemon) throw new Error("No results!");
       return filteredPokemon;
