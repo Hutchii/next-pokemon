@@ -6,11 +6,8 @@ import type {
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from "next";
-import { prisma } from "@/backend/utils/prisma";
-import { AsyncReturnType } from "@/backend/utils/ts-bs";
 import { createSSGHelpers } from "@trpc/react/ssg";
 import { appRouter } from "@/backend/router";
-import superjson from "superjson";
 import PokemonImage from "@/components/UI/PokemonImage";
 import { generateCountPercent } from "@/utils/generateCountPercent";
 import { pokemonColors } from "@/utils/pokemonColors";
@@ -65,8 +62,7 @@ const Pokedex = () => {
         {pokemonColors.map((color) => (
           <button
             key={color}
-            className="capitalize py-2 px-6 mt-8 text-md rounded-full border-violet-100 border-[1px] focus:outline-none focus:ring-1 focus:ring-violet-200"
-            style={{background: color}}
+            className={`nfont-semibold text-violet-100 capitalize py-2 px-6 mt-8 text-md rounded-full border-violet-100 border-[1px] focus:outline-none focus:ring-1 focus:ring-violet-200 ${color === state.color && "bg-gradient-to-r from-indigo-800 to-violet-800"}`}
             onClick={() => dispatch({ type: "color", color: color })}
           >
             {color}
@@ -80,54 +76,54 @@ const Pokedex = () => {
       />
       <input type="range" min="1" max="493" onChange={(e) => handleRange(e)} />
       <button>Something</button> */}
-      {data && <PokemonListing data={data} />}
+      {/* {data && <PokemonListing data={data} />} */}
     </main>
   );
 };
 // InferGetStaticPropsType<typeof getStaticProps>
-const PokemonListing = ({
-  data,
-}: {
-  data: any;
-}): JSX.Element => {
-  return (
-    <div className="grid md:grid-cols-[repeat(auto-fill,minmax(330px,_1fr))] md2:grid-cols-[repeat(auto-fill,minmax(380px,_1fr))] gap-10 mt-20">
-      {data.slice(0, 10).map((pokemon: any) => (
-        <div key={pokemon.id} className="flex flex-col items-center">
-          <div className="h-52 sm:h-64 drop-shadow-[0_0_100px_#3700ffb9]">
-            <PokemonImage image={pokemon.spriteUrl} />
-          </div>
-          <div className="bg-[#111111de] rounded-3xl h-72 -mt-20 px-6 font-semibold text-violet-100 w-full">
-            <h1 className="text-center pt-24 capitalize text-3xl mb-6 animate-fade-in">
-              {pokemon.name}
-            </h1>
-            <div className="text-lg flex justify-between items-center gap-4 w-full">
-              <p>Percent:</p>
-              <p className="text-gray-400 animate-fade-in">
-                {generateCountPercent(pokemon) + "%"}
-              </p>
-              <div className="relative w-32">
-                <div className="bg-gray-300 rounded-full w-full h-4 opacity-50" />
-                <div
-                  className="animate-fade-in absolute inset-0 bg-violet-100 rounded-full h-4"
-                  style={{ width: `${+generateCountPercent(pokemon)}%` }}
-                />
-              </div>
-            </div>
-            <div className="text-lg flex justify-between items-center gap-4 w-full mt-2">
-              <p>Base experience:</p>
-              <p>{pokemon.baseExperience}</p>
-            </div>
-            <div className="text-lg flex justify-between items-center gap-4 w-full mt-2">
-              <p>Color:</p>
-              <p className="capitalize">{pokemon.color}</p>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
+// const PokemonListing = ({
+//   data,
+// }: {
+//   data: any;
+// }): JSX.Element => {
+//   return (
+//     <div className="grid md:grid-cols-[repeat(auto-fill,minmax(330px,_1fr))] md2:grid-cols-[repeat(auto-fill,minmax(380px,_1fr))] gap-10 mt-20">
+//       {data.slice(0, 10).map((pokemon: any) => (
+//         <div key={pokemon.id} className="flex flex-col items-center">
+//           <div className="h-52 sm:h-64 drop-shadow-[0_0_100px_#3700ffb9]">
+//             <PokemonImage image={pokemon.spriteUrl} />
+//           </div>
+//           <div className="bg-[#111111de] rounded-3xl h-72 -mt-20 px-6 font-semibold text-violet-100 w-full">
+//             <h1 className="text-center pt-24 capitalize text-3xl mb-6 animate-fade-in">
+//               {pokemon.name}
+//             </h1>
+//             <div className="text-lg flex justify-between items-center gap-4 w-full">
+//               <p>Percent:</p>
+//               <p className="text-gray-400 animate-fade-in">
+//                 {generateCountPercent(pokemon) + "%"}
+//               </p>
+//               <div className="relative w-32">
+//                 <div className="bg-gray-300 rounded-full w-full h-4 opacity-50" />
+//                 <div
+//                   className="animate-fade-in absolute inset-0 bg-violet-100 rounded-full h-4"
+//                   style={{ width: `${+generateCountPercent(pokemon)}%` }}
+//                 />
+//               </div>
+//             </div>
+//             <div className="text-lg flex justify-between items-center gap-4 w-full mt-2">
+//               <p>Base experience:</p>
+//               <p>{pokemon.baseExperience}</p>
+//             </div>
+//             <div className="text-lg flex justify-between items-center gap-4 w-full mt-2">
+//               <p>Color:</p>
+//               <p className="capitalize">{pokemon.color}</p>
+//             </div>
+//           </div>
+//         </div>
+//       ))}
+//     </div>
+//   );
+// };
 
 export const getStaticProps: GetStaticProps = async () => {
   const ssg = createSSGHelpers({
