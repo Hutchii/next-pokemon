@@ -3,7 +3,8 @@ import { trpc } from "@/utils/trpc";
 import Image from "next/image";
 import { inferQueryResponse } from "./api/trpc/[trpc]";
 import type React from "react";
-import { useState } from "react";
+import PokemonImage from "@/components/UI/PokemonImage";
+import { generateCountPercent } from "@/utils/generateCountPercent";
 
 const Home: NextPage = () => {
   const {
@@ -16,7 +17,6 @@ const Home: NextPage = () => {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
-  console.log(pokemonPair);
   const voteMutation = trpc.useMutation(["cast-vote"]);
 
   const voteForRoundest = (selected: number) => {
@@ -83,11 +83,6 @@ const PokemonListing: React.FC<{
   even: boolean;
   disabled: boolean;
 }> = ({ pokemon, vote, even, disabled }) => {
-  const generateCountPercent = (pokemon: PokemonFromServer) => {
-    const { VoteFor, VoteAgainst } = pokemon._count;
-    if (VoteFor + VoteAgainst === 0) return 0;
-    return ((VoteFor / (VoteFor + VoteAgainst)) * 100).toFixed(2);
-  };
   return (
     <div key={pokemon.id}>
       <div
@@ -125,20 +120,5 @@ const PokemonListing: React.FC<{
         </button>
       </div>
     </div>
-  );
-};
-
-const PokemonImage = ({ image }: { image: string }): JSX.Element => {
-  const [startAnimation, setStartAnimation] = useState(false);
-  return (
-    <Image
-      src={image}
-      alt="Pokemon"
-      width={256}
-      height={256}
-      quality={90}
-      className={`opacity-0 ${startAnimation && "animate-fade-in"}`}
-      onLoadingComplete={() => setStartAnimation(true)}
-    />
   );
 };

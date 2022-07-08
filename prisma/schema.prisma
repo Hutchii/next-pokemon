@@ -25,9 +25,11 @@ model Vote {
 }
 
 model Pokemon {
-  id          Int    @id
-  name        String
-  spriteUrl   String
-  VoteFor     Vote[] @relation("votesFor")
-  VoteAgainst Vote[] @relation("votesAgainst")
+  id             Int    @id
+  name           String
+  spriteUrl      String
+  color          String
+  baseExperience Int
+  VoteFor        Vote[] @relation("votesFor")
+  VoteAgainst    Vote[] @relation("votesAgainst")
 }

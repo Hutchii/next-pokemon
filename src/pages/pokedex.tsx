@@ -1,27 +1,35 @@
 import { trpc } from "@/utils/trpc";
 import { useMemo, useReducer } from "react";
 import { debounce } from "lodash";
-import type { GetStaticProps, GetStaticPropsContext } from "next";
+import type {
+  GetStaticProps,
+  GetStaticPropsContext,
+  InferGetStaticPropsType,
+} from "next";
 import { prisma } from "@/backend/utils/prisma";
 import { AsyncReturnType } from "@/backend/utils/ts-bs";
 import { createSSGHelpers } from "@trpc/react/ssg";
 import { appRouter } from "@/backend/router";
 import superjson from "superjson";
+import PokemonImage from "@/components/UI/PokemonImage";
+import { generateCountPercent } from "@/utils/generateCountPercent";
+import { pokemonColors } from "@/utils/pokemonColors";
 
-// type PokemonQueryResult = AsyncReturnType<typeof getAllPokemons>;
-
-const initialState = { filter: 0, search: "" };
+const initialState = { search: "", range: 493, color: "" };
 
 type ACTIONTYPE =
-  | { type: "filter"; filter: number }
-  | { type: "search"; search: string };
+  | { type: "color"; color: string }
+  | { type: "search"; search: string }
+  | { type: "range"; range: number };
 
 function reducer(state: typeof initialState, action: ACTIONTYPE) {
   switch (action.type) {
-    case "filter":
-      return { ...state, filter: action.filter };
+    case "color":
+      return { ...state, color: action.color };
     case "search":
       return { ...state, search: action.search };
+    case "range":
+      return { ...state, range: action.range };
     default:
       const _exhaustiveCheck: never = action;
       return _exhaustiveCheck;
@@ -30,13 +38,11 @@ function reducer(state: typeof initialState, action: ACTIONTYPE) {
 
 const Pokedex = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { data, refetch } = trpc.useQuery(["filter-pokemon", { search: state.search }]);
-  // const { data } = trpc.useQuery([
-  //   "filter-pokemon",
-  //   { search: state.search },
-  //   // { filter: state.filter, search: state.search },
-  // ]);
-  console.log(data);
+  const { data } = trpc.useQuery([
+    "filter-pokemon",
+    { search: state.search, range: state.range, color: state.color },
+  ]);
+  console.log(state);
   const handleSearch = useMemo(
     () =>
       debounce(
@@ -45,50 +51,89 @@ const Pokedex = () => {
       ),
     []
   );
+  const handleRange = useMemo(
+    () =>
+      debounce(
+        (e) => dispatch({ type: "range", range: parseInt(e.target.value) }),
+        350
+      ),
+    []
+  );
 
   return (
-    <main className="mx-auto px-[2rem] 2xl:px-40">
+    <main className="mx-auto px-[2rem] lg:px-20 3xl:px-40 mt-10 sm:mt-20">
+      {pokemonColors.map((color) => (
+        <button
+          key={color}
+          className="ml-4 capitalize"
+          onClick={() => dispatch({ type: "color", color: color })}
+        >
+          {color}
+        </button>
+      ))}
       <input
         type="search"
         className="text-black"
         onChange={(e) => handleSearch(e)}
       />
-      <button
-        // onClick={() => dispatch({ type: "filter", filter: 1 })}
-        className="block"
-      >
-        All
-      </button>
+      <input type="range" min="1" max="493" onChange={(e) => handleRange(e)} />
       <button>Something</button>
-      {data?.map((pokemon) => (
-        <div key={pokemon.name}>{pokemon.name}</div>
-      ))}
+      {data && <PokemonListing data={data} />}
     </main>
   );
 };
 
-// const getAllPokemons = async () => {
-//   return await prisma.pokemon.findMany({
-//     orderBy: { name: "desc" },
-//   });
-// };
+const PokemonListing = ({
+  data,
+}: {
+  data: InferGetStaticPropsType<typeof getStaticProps>;
+}): JSX.Element => {
+  return (
+    <div className="grid md:grid-cols-[repeat(auto-fill,minmax(330px,_1fr))] md2:grid-cols-[repeat(auto-fill,minmax(380px,_1fr))] gap-10 mt-20">
+      {data.slice(0, 10).map((pokemon: any) => (
+        <div key={pokemon.id} className="flex flex-col items-center">
+          <div className="h-52 sm:h-64 drop-shadow-[0_0_100px_#3700ffb9]">
+            <PokemonImage image={pokemon.spriteUrl} />
+          </div>
+          <div className="bg-[#111111de] rounded-3xl h-72 -mt-20 px-6 font-semibold text-violet-100 w-full">
+            <h1 className="text-center pt-24 capitalize text-3xl mb-6 animate-fade-in">
+              {pokemon.name}
+            </h1>
+            <div className="text-lg flex justify-between items-center gap-4 w-full">
+              <p>Percent:</p>
+              <p className="text-gray-400 animate-fade-in">
+                {generateCountPercent(pokemon) + "%"}
+              </p>
+              <div className="relative w-32">
+                <div className="bg-gray-300 rounded-full w-full h-4 opacity-50" />
+                <div
+                  className="animate-fade-in absolute inset-0 bg-violet-100 rounded-full h-4"
+                  style={{ width: `${+generateCountPercent(pokemon)}%` }}
+                />
+              </div>
+            </div>
+            <div className="text-lg flex justify-between items-center gap-4 w-full mt-2">
+              <p>Base experience:</p>
+              <p>{pokemon.baseExperience}</p>
+            </div>
+            <div className="text-lg flex justify-between items-center gap-4 w-full mt-2">
+              <p>Color:</p>
+              <p className="capitalize">{pokemon.color}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 export const getStaticProps: GetStaticProps = async () => {
   const ssg = createSSGHelpers({
     router: appRouter,
     ctx: {},
-    // transformer: superjson,
   });
 
-  // const allPokemons = await getAllPokemons();
-  // return {
-  //   props: {
-  //     pokemons: allPokemons,
-  //   },
-  //   revalidate: 60,
-  // };
-
-  await ssg.fetchQuery("filter-pokemon", { search: "" });
+  await ssg.fetchQuery("filter-pokemon", { search: "", range: 493, color: "" });
 
   return {
     props: {
