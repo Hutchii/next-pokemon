@@ -42,7 +42,6 @@ const Pokedex = () => {
     "filter-pokemon",
     { search: state.search, range: state.range, color: state.color },
   ]);
-  console.log(state);
   const handleSearch = useMemo(
     () =>
       debounce(
@@ -62,31 +61,34 @@ const Pokedex = () => {
 
   return (
     <main className="mx-auto px-[2rem] lg:px-20 3xl:px-40 mt-10 sm:mt-20">
-      {pokemonColors.map((color) => (
-        <button
-          key={color}
-          className="ml-4 capitalize"
-          onClick={() => dispatch({ type: "color", color: color })}
-        >
-          {color}
-        </button>
-      ))}
-      <input
+      <div className="flex gap-3">
+        {pokemonColors.map((color) => (
+          <button
+            key={color}
+            className="capitalize py-2 px-6 mt-8 text-md rounded-full border-violet-100 border-[1px] focus:outline-none focus:ring-1 focus:ring-violet-200"
+            style={{background: color}}
+            onClick={() => dispatch({ type: "color", color: color })}
+          >
+            {color}
+          </button>
+        ))}
+      </div>
+      {/* <input
         type="search"
         className="text-black"
         onChange={(e) => handleSearch(e)}
       />
       <input type="range" min="1" max="493" onChange={(e) => handleRange(e)} />
-      <button>Something</button>
+      <button>Something</button> */}
       {data && <PokemonListing data={data} />}
     </main>
   );
 };
-
+// InferGetStaticPropsType<typeof getStaticProps>
 const PokemonListing = ({
   data,
 }: {
-  data: InferGetStaticPropsType<typeof getStaticProps>;
+  data: any;
 }): JSX.Element => {
   return (
     <div className="grid md:grid-cols-[repeat(auto-fill,minmax(330px,_1fr))] md2:grid-cols-[repeat(auto-fill,minmax(380px,_1fr))] gap-10 mt-20">
