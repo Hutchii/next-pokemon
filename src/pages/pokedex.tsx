@@ -1,6 +1,6 @@
 import { trpc } from "@/utils/trpc";
 import { useMemo, useReducer, useRef } from "react";
-import { debounce } from "lodash";
+import { debounce, range } from "lodash";
 import type {
   GetStaticProps,
   GetStaticPropsContext,
@@ -15,13 +15,21 @@ import Pagination from "@/components/UI/Pagination";
 import { usePagination } from "@/hooks/usePagination";
 import { prisma } from "@/backend/utils/prisma";
 import { AsyncReturnType } from "@/backend/utils/ts-bs";
+import MultiRangeSlider from "@/components/UI/MultiRangeSlider";
 
-const initialState = { search: "", range: 493, color: "", page: 1 };
+const initialState = {
+  search: "",
+  rangeMin: 36,
+  rangeMax: 635,
+  color: "",
+  page: 1,
+};
 
 type ACTIONTYPE =
   | { type: "color"; color: string }
   | { type: "search"; search: string }
-  | { type: "range"; range: number }
+  | { type: "rangeMin"; rangeMin: number }
+  | { type: "rangeMax"; rangeMax: number }
   | { type: "pagination"; page: number };
 
 function reducer(state: typeof initialState, action: ACTIONTYPE) {
@@ -30,8 +38,20 @@ function reducer(state: typeof initialState, action: ACTIONTYPE) {
       return { ...state, search: "", page: 1, color: action.color };
     case "search":
       return { ...state, page: 1, search: action.search };
-    case "range":
-      return { ...state, range: action.range };
+    case "rangeMin":
+      return {
+        ...state,
+        search: "",
+        page: 1,
+        rangeMin: action.rangeMin,
+      };
+    case "rangeMax":
+      return {
+        ...state,
+        search: "",
+        page: 1,
+        rangeMax: action.rangeMax,
+      };
     case "pagination":
       return { ...state, page: action.page };
     default:
@@ -45,14 +65,11 @@ type PokemonQueryResult = AsyncReturnType<typeof getAllPokemons>;
 const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const searchRef = useRef<HTMLInputElement>(null);
-  // const { data } = trpc.useQuery([
-  //   "filter-pokemon",
-  //   { search: state.search, range: state.range, color: state.color },
-  // ]);
 
   const filteredData = pokemon.filter(
     (pokemon) =>
-      pokemon.color.includes(state.color) && pokemon.name.includes(state.search)
+      pokemon.color.includes(state.color) && pokemon.name.includes(state.search) &&
+    pokemon.baseExperience >= state.rangeMin
   );
 
   const totalCount = filteredData?.length!;
@@ -72,18 +89,39 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
       ),
     []
   );
-  const handleRange = useMemo(
+  // const handleRangeMin = (e) =>
+  //   dispatch({
+  //     type: "rangeMin",
+  //     rangeMin: e.target.value,
+  //   });
+  const handleRangeMin = useMemo(
     () =>
       debounce(
-        (e) => dispatch({ type: "range", range: parseInt(e.target.value) }),
-        350
+        (e) =>
+          dispatch({
+            type: "rangeMin",
+            rangeMin: e,
+          }),
+        0
       ),
     []
   );
-
+  const handleRangeMax = useMemo(
+    () =>
+      debounce(
+        (e) =>
+          dispatch({
+            type: "rangeMax",
+            rangeMax: e,
+          }),
+        0
+      ),
+    []
+  );
+  console.log(state);
   return (
     <main className="mx-auto px-[2rem] lg:px-20 3xl:px-40 mt-10 sm:mt-20 pb-20">
-      <div className="flex gap-10 justify-between">
+      <div className="3xl:flex 3xl:gap-10 3xl:justify-between">
         <div className="flex flex-wrap gap-3">
           {pokemonColors.map((color) => (
             <button
@@ -102,10 +140,10 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
             </button>
           ))}
         </div>
-        <div className="relative">
+        <div className="relative mt-5 3xl:mt-0">
           <input
             type="search"
-            className="h-10 w-80 pl-10 pr-4 py-1.5 text-base font-medium text-slate-500 bg-white rounded-full focus:outline-none placeholder:text-slate-400"
+            className="h-10 w-full sm:w-80 pl-10 py-1.5 text-base font-medium text-slate-500 bg-white rounded-full focus:outline-none placeholder:text-slate-400"
             placeholder="Search by name..."
             aria-label="Search"
             onChange={(e) => handleSearch(e)}
@@ -139,13 +177,25 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
           </span>
         </div>
       </div>
+      <label htmlFor="" className="text-lg mr-4">
+        Base experience:
+      </label>
       {/* <input
-        type="search"
-        className="text-black"
-        onChange={(e) => handleSearch(e)}
-        ref={searchRef}
+        className="mt-8"
+        type="range"
+        min="36"
+        max="635"
+        onChange={(e) => handleRangeMin(e)}
       /> */}
-      {/* <input type="range" min="1" max="493" onChange={(e) => handleRange(e)} /> */}
+      <MultiRangeSlider
+        min={36}
+        max={635}
+        minVal={state.rangeMin}
+        maxVal={state.rangeMax}
+        onChangeMin={handleRangeMin}
+        onChangeMax={handleRangeMax}
+      />
+      {/* <p>{state.range}</p> */}
       {filteredData && <PokemonListing data={filteredData} page={state.page} />}
       {paginationRange?.length < 2 || !paginationRange ? null : (
         <div className="flex justify-center">
@@ -216,11 +266,11 @@ const PokemonListing = ({
 
 const getAllPokemons = async () => {
   return await prisma.pokemon.findMany({
-    where: {
-      name: { contains: "" },
-      id: { lte: 493 },
-      color: { contains: "" },
-    },
+    // where: {
+    //   name: { contains: "" },
+    //   id: { lte: 635 },
+    //   color: { contains: "" },
+    // },
     select: {
       id: true,
       name: true,

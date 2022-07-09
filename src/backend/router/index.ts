@@ -40,37 +40,37 @@ export const appRouter = trpc
       return { success: true, vote: voteInDb };
     },
   })
-  .query("filter-pokemon", {
-    input: z.object({
-      color: z.string(),
-      search: z.string(),
-      range: z.number(),
-    }),
-    async resolve({ input }) {
-      const filteredPokemon = await prisma.pokemon.findMany({
-        where: {
-          name: { contains: input.search },
-          id: { lte: input.range },
-          color: { contains: input.color },
-        },
-        select: {
-          id: true,
-          name: true,
-          spriteUrl: true,
-          color: true,
-          baseExperience: true,
-          _count: {
-            select: {
-              VoteFor: true,
-              VoteAgainst: true,
-            },
-          },
-        },
-      });
-      if (!filteredPokemon) throw new Error("No results!");
-      return filteredPokemon;
-    },
-  });
+  // .query("filter-pokemon", {
+  //   input: z.object({
+  //     color: z.string(),
+  //     search: z.string(),
+  //     range: z.number(),
+  //   }),
+  //   async resolve({ input }) {
+  //     const filteredPokemon = await prisma.pokemon.findMany({
+  //       where: {
+  //         name: { contains: input.search },
+  //         baseExperience: { lte: input.range },
+  //         color: { contains: input.color },
+  //       },
+  //       select: {
+  //         id: true,
+  //         name: true,
+  //         spriteUrl: true,
+  //         color: true,
+  //         baseExperience: true,
+  //         _count: {
+  //           select: {
+  //             VoteFor: true,
+  //             VoteAgainst: true,
+  //           },
+  //         },
+  //       },
+  //     });
+  //     if (!filteredPokemon) throw new Error("No results!");
+  //     return filteredPokemon;
+  //   },
+  // });
 
 // export type definition of API
 export type AppRouter = typeof appRouter;
