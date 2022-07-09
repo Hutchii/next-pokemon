@@ -1,5 +1,5 @@
 import { trpc } from "@/utils/trpc";
-import { useMemo, useReducer } from "react";
+import { useMemo, useReducer, useRef } from "react";
 import { debounce } from "lodash";
 import type {
   GetStaticProps,
@@ -11,34 +11,59 @@ import { appRouter } from "@/backend/router";
 import PokemonImage from "@/components/UI/PokemonImage";
 import { generateCountPercent } from "@/utils/generateCountPercent";
 import { pokemonColors } from "@/utils/pokemonColors";
+import Pagination from "@/components/UI/Pagination";
+import { usePagination } from "@/hooks/usePagination";
+import { prisma } from "@/backend/utils/prisma";
+import { AsyncReturnType } from "@/backend/utils/ts-bs";
 
-const initialState = { search: "", range: 493, color: "" };
+const initialState = { search: "", range: 493, color: "", page: 1 };
 
 type ACTIONTYPE =
   | { type: "color"; color: string }
   | { type: "search"; search: string }
-  | { type: "range"; range: number };
+  | { type: "range"; range: number }
+  | { type: "pagination"; page: number };
 
 function reducer(state: typeof initialState, action: ACTIONTYPE) {
   switch (action.type) {
     case "color":
-      return { ...state, color: action.color };
+      return { ...state, search: "", page: 1, color: action.color };
     case "search":
-      return { ...state, search: action.search };
+      return { ...state, page: 1, search: action.search };
     case "range":
       return { ...state, range: action.range };
+    case "pagination":
+      return { ...state, page: action.page };
     default:
       const _exhaustiveCheck: never = action;
       return _exhaustiveCheck;
   }
 }
 
-const Pokedex = () => {
+type PokemonQueryResult = AsyncReturnType<typeof getAllPokemons>;
+
+const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { data } = trpc.useQuery([
-    "filter-pokemon",
-    { search: state.search, range: state.range, color: state.color },
-  ]);
+  const searchRef = useRef<HTMLInputElement>(null);
+  // const { data } = trpc.useQuery([
+  //   "filter-pokemon",
+  //   { search: state.search, range: state.range, color: state.color },
+  // ]);
+
+  const filteredData = pokemon.filter(
+    (pokemon) =>
+      pokemon.color.includes(state.color) && pokemon.name.includes(state.search)
+  );
+
+  const totalCount = filteredData?.length!;
+  const pageSize = 10;
+  const currentPage = state.page;
+  const paginationRange = usePagination({
+    totalCount,
+    pageSize,
+    currentPage,
+  })!;
+  let lastPage = paginationRange?.[paginationRange?.length - 1] === state.page;
   const handleSearch = useMemo(
     () =>
       debounce(
@@ -57,55 +82,119 @@ const Pokedex = () => {
   );
 
   return (
-    <main className="mx-auto px-[2rem] lg:px-20 3xl:px-40 mt-10 sm:mt-20">
-      <div className="flex gap-3">
-        {pokemonColors.map((color) => (
-          <button
-            key={color}
-            className={`nfont-semibold text-violet-100 capitalize py-2 px-6 mt-8 text-md rounded-full border-violet-100 border-[1px] focus:outline-none focus:ring-1 focus:ring-violet-200 ${color === state.color && "bg-gradient-to-r from-indigo-800 to-violet-800"}`}
-            onClick={() => dispatch({ type: "color", color: color })}
-          >
-            {color}
-          </button>
-        ))}
+    <main className="mx-auto px-[2rem] lg:px-20 3xl:px-40 mt-10 sm:mt-20 pb-20">
+      <div className="flex gap-10 justify-between">
+        <div className="flex flex-wrap gap-3">
+          {pokemonColors.map((color) => (
+            <button
+              key={color}
+              type="button"
+              className={`h-10 px-6 py-2.5 bg-white text-slate-800 font-bold text-md leading-tight capitalize rounded-full shadow-md transition duration-150 ease-in-out ${
+                color === state.color &&
+                "text-white bg-gradient-to-r from-indigo-800 to-violet-800"
+              }`}
+              onClick={() => {
+                if (searchRef.current) searchRef.current.value = "";
+                dispatch({ type: "color", color: color });
+              }}
+            >
+              {color}
+            </button>
+          ))}
+        </div>
+        <div className="relative">
+          <input
+            type="search"
+            className="h-10 w-80 pl-10 pr-4 py-1.5 text-base font-medium text-slate-500 bg-white rounded-full focus:outline-none placeholder:text-slate-400"
+            placeholder="Search by name..."
+            aria-label="Search"
+            onChange={(e) => handleSearch(e)}
+            ref={searchRef}
+          />
+          <span className="absolute left-3 top-[7.5px] text-gray-700">
+            <svg
+              width="24"
+              height="24"
+              fill="none"
+              focusable="false"
+              aria-hidden="true"
+              role="img"
+              className="stroke-slate-400"
+            >
+              <path
+                d="m19 19-3.5-3.5"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
+              <circle
+                cx="11"
+                cy="11"
+                r="6"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></circle>
+            </svg>
+          </span>
+        </div>
       </div>
       {/* <input
         type="search"
         className="text-black"
         onChange={(e) => handleSearch(e)}
-      />
-      <input type="range" min="1" max="493" onChange={(e) => handleRange(e)} />
-      <button>Something</button> */}
-      {data && <PokemonListing data={data} />}
+        ref={searchRef}
+      /> */}
+      {/* <input type="range" min="1" max="493" onChange={(e) => handleRange(e)} /> */}
+      {filteredData && <PokemonListing data={filteredData} page={state.page} />}
+      {paginationRange?.length < 2 || !paginationRange ? null : (
+        <div className="flex justify-center">
+          <Pagination
+            onArrowClick={(sign: number = 0) =>
+              dispatch({ type: "pagination", page: state.page + sign })
+            }
+            onPageClick={(page: number) =>
+              dispatch({ type: "pagination", page: page })
+            }
+            disabledPrev={state.page < 2}
+            disabledNext={lastPage}
+            paginationRange={paginationRange}
+            currentPage={state.page}
+          />
+        </div>
+      )}
     </main>
   );
 };
 // InferGetStaticPropsType<typeof getStaticProps>
 const PokemonListing = ({
   data,
+  page,
 }: {
-  data: any;
+  data: PokemonQueryResult;
+  page: number;
 }): JSX.Element => {
   return (
     <div className="grid md:grid-cols-[repeat(auto-fill,minmax(330px,_1fr))] md2:grid-cols-[repeat(auto-fill,minmax(380px,_1fr))] gap-10 mt-20">
-      {data.slice(0, 10).map((pokemon: any) => (
+      {data.slice((page - 1) * 10, page * 10).map((pokemon: any) => (
         <div key={pokemon.id} className="flex flex-col items-center">
-          <div className="h-52 sm:h-64 drop-shadow-[0_0_100px_#3700ffb9]">
+          <div className="h-52 sm:h-64 drop-shadow-[0_0_100px_#3700ffb9] z-10">
             <PokemonImage image={pokemon.spriteUrl} />
           </div>
           <div className="bg-[#111111de] rounded-3xl h-72 -mt-20 px-6 font-semibold text-violet-100 w-full">
-            <h1 className="text-center pt-24 capitalize text-3xl mb-6 animate-fade-in">
+            {/* animate-fade-in */}
+            <h1 className="text-center pt-24 capitalize text-3xl mb-6">
               {pokemon.name}
             </h1>
             <div className="text-lg flex justify-between items-center gap-4 w-full">
               <p>Percent:</p>
-              <p className="text-gray-400 animate-fade-in">
+              <p className="text-gray-400">
                 {generateCountPercent(pokemon) + "%"}
               </p>
               <div className="relative w-32">
                 <div className="bg-gray-300 rounded-full w-full h-4 opacity-50" />
                 <div
-                  className="animate-fade-in absolute inset-0 bg-violet-100 rounded-full h-4"
+                  className="absolute inset-0 bg-violet-100 rounded-full h-4"
                   style={{ width: `${+generateCountPercent(pokemon)}%` }}
                 />
               </div>
@@ -125,18 +214,37 @@ const PokemonListing = ({
   );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
-  const ssg = createSSGHelpers({
-    router: appRouter,
-    ctx: {},
+const getAllPokemons = async () => {
+  return await prisma.pokemon.findMany({
+    where: {
+      name: { contains: "" },
+      id: { lte: 493 },
+      color: { contains: "" },
+    },
+    select: {
+      id: true,
+      name: true,
+      spriteUrl: true,
+      color: true,
+      baseExperience: true,
+      _count: {
+        select: {
+          VoteFor: true,
+          VoteAgainst: true,
+        },
+      },
+    },
   });
+};
 
-  await ssg.fetchQuery("filter-pokemon", { search: "", range: 493, color: "" });
+export const getStaticProps: GetStaticProps = async () => {
+  const allPokemons = await getAllPokemons();
 
   return {
     props: {
-      trpcState: ssg.dehydrate(),
+      pokemon: allPokemons,
     },
+    revalidate: 120,
   };
 };
 

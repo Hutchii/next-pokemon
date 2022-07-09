@@ -112,7 +112,8 @@ const PokemonListing: React.FC<{
           </div>
         </div>
         <button
-          className="py-2 px-6 mt-8 text-md rounded-full bg-transparent border-violet-100 border-[1px] focus:outline-none focus:ring-1 focus:ring-violet-200"
+          type="button"
+          className="mt-8 px-6 py-2.5 bg-white text-black font-bold text-md leading-tight capitalize rounded-full shadow-md transition duration-150 ease-in-out focus:bg-neutral-300"
           onClick={() => vote()}
           disabled={disabled}
         >
