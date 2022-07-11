@@ -19,19 +19,62 @@ import {
 
 const PAGE_SIZE = 10;
 
-type PokemonQueryResult = AsyncReturnType<typeof getAllPokemons>;
+type PokemonQuery = AsyncReturnType<typeof getAllPokemons>;
 
-const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
+const Pokedex = ({ pokemon }: { pokemon: PokemonQuery }) => {
   const [state, dispatch] = useReducer(reducerFilters, initialFilters);
   const searchRef = useRef<HTMLInputElement>(null);
 
-  const filteredData = pokemon.filter(
-    (pokemon) =>
-      pokemon.color.includes(state.color === "None" ? "" : state.color) &&
-      pokemon.name.includes(state.search) &&
-      pokemon.baseExperience >= state.minExperience &&
-      pokemon.baseExperience <= state.maxExperience
-  );
+  const filterData = () => {
+    const composeData =
+      (...fns: ((d: PokemonQuery) => PokemonQuery)[]) =>
+      (data: PokemonQuery) =>
+        fns.reduce((acc, fn) => fn(acc), data);
+
+    const filterByColor = (d: PokemonQuery) =>
+      d.filter(({ color }) => color.includes(state.color));
+
+    const searchResult = (d: PokemonQuery) =>
+      d.filter(({ name }) => name.includes(state.search));
+
+    const filterByExperience = (d: PokemonQuery) =>
+      d.filter(
+        ({ baseExperience }) =>
+          baseExperience <= state.maxExperience &&
+          baseExperience >= state.minExperience
+      );
+
+    const sortResult = (d: PokemonQuery) => {
+      if (state.sort === "") return d;
+      return d.sort((a, b) =>
+        a[state.sort as keyof PokemonQuery[0]] >
+        b[state.sort as keyof PokemonQuery[0]]
+          ? 1
+          : -1
+      );
+    };
+
+    return composeData(
+      filterByColor,
+      searchResult,
+      filterByExperience,
+      sortResult
+    )(pokemon);
+  };
+
+  const filteredData = filterData();
+  // const filteredData = pokemon
+  //   .filter(
+  //     (pokemon) =>
+  //       pokemon.color.includes(state.color === "" ? "" : state.color) &&
+  //       pokemon.name.includes(state.search) &&
+  //       pokemon.baseExperience >= state.minExperience &&
+  //       pokemon.baseExperience <= state.maxExperience
+  //   )
+  //   .sort((a, b) => {
+  //     if (state.sort === "") return;
+  //     return a[state.sort] > b[state.sort] ? 1 : -1;
+  //   });
 
   const totalCount = filteredData?.length;
   const currentPage = state.page;
@@ -62,14 +105,8 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
       payload: { key: key, value: e },
     });
 
-  const handleSortSelectInput = (value: string) =>
-    dispatch({ type: "useFilter", payload: { key: "sort", value: value } });
-
-  const handleColorSelectInput = (value: string) =>
-    dispatch({
-      type: "useFilter",
-      payload: { key: "color", value: value },
-    });
+  const handleSortSelectInput = (value: string, key: string) =>
+    dispatch({ type: "useFilter", payload: { key: key, value: value } });
 
   const handleResetButton = () => {
     dispatch({ type: "reset" });
@@ -83,14 +120,16 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
           <SelectInput
             title="Sort by"
             selected={state.sort}
-            onChange={handleSortSelectInput}
+            onChange={(e) => handleSortSelectInput(e, "sort")}
             options={sortOptions}
+            firstValue="Default"
           />
           <SelectInput
             title="Filter by"
             selected={state.color}
-            onChange={handleColorSelectInput}
+            onChange={(e) => handleSortSelectInput(e, "color")}
             options={colorsOptions}
+            firstValue="None"
           />
           <MultiRangeInput
             min={36}
@@ -101,7 +140,7 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
           />
           <button
             type="button"
-            className="h-10 px-6 bg-white text-black font-bold text-md leading-tight capitalize rounded-full shadow-md"
+            className="h-10 px-6 bg-white text-black font-bold text-md leading-tight rounded-full shadow-md"
             onClick={handleResetButton}
           >
             Reset all filters
@@ -135,7 +174,7 @@ const PokemonListing = ({
   data,
   page,
 }: {
-  data: PokemonQueryResult;
+  data: PokemonQuery;
   page: number;
 }): JSX.Element => {
   return (

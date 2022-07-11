@@ -6,11 +6,13 @@ export default function Select({
   onChange,
   options,
   title,
+  firstValue,
 }: {
   selected: string;
   onChange: (value: string) => void;
   options: string[];
   title: string;
+  firstValue: string;
 }) {
   return (
     <div className="w-72 z-20">
@@ -19,7 +21,7 @@ export default function Select({
         <div className="relative">
           <Listbox.Button className="relative w-full rounded-full bg-white h-10 pl-6 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 text-slate-800 font-bold text-md">
             <span className="block text-black truncate capitalize">
-              {selected}
+              {selected === "" ? firstValue : selected}
             </span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 stroke-slate-800">
               <svg
@@ -61,7 +63,7 @@ export default function Select({
                           selected ? "font-bold" : "font-semibold"
                         }`}
                       >
-                        {person}
+                        {person === "" ? firstValue : person}
                       </span>
                       {selected ? (
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3 stroke-violet-800">
