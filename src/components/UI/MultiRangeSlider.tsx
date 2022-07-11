@@ -59,7 +59,8 @@ const MultiRangeSlider = ({
   // }, [minVal, maxVal, onChange]);
 
   return (
-    <div className="container">
+    <>
+      <p className="mb-5 text-xl font-medium">Base Experience:</p>
       <input
         type="range"
         min="36"
@@ -87,14 +88,17 @@ const MultiRangeSlider = ({
         }}
         className="thumb thumb--zindex-4"
       />
-
       <div className="slider">
         <div className="slider__track" />
         <div ref={range} className="slider__range" />
-        <div className="slider__left-value">{minVal}</div>
-        <div className="slider__right-value">{maxVal}</div>
       </div>
-    </div>
+      <div className="slider__desc">
+        <p className="slider__left-value">From - To</p>
+        <p className="slider__right-value">
+          {minVal} - {maxVal}
+        </p>
+      </div>
+    </>
   );
 };
 

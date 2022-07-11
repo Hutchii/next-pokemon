@@ -44,47 +44,48 @@ input[type="search"]::-webkit-search-cancel-button {
 
 .slider {
   position: relative;
-  width: 200px;
+  width: 240px;
   margin-top: 1rem;
 }
 
 .slider__track,
-.slider__range,
-.slider__left-value,
-.slider__right-value {
+.slider__range {
   position: absolute;
 }
 
 .slider__track,
 .slider__range {
-  border-radius: 3px;
-  height: 5px;
+  border-radius: 20rem;
+  height: 10px;
 }
 
 .slider__track {
-  background-color: #ced4da;
+  background-color: #FFFFFF;
   width: 100%;
   z-index: 1;
 }
 
 .slider__range {
-  background-color: #9fe5e1;
+  background-image: linear-gradient(to right, #3730a3, #5b21b6);
   z-index: 2;
 }
 
 .slider__left-value,
 .slider__right-value {
-  color: #dee2e6;
-  font-size: 12px;
-  margin-top: 20px;
+  color: #94a3b8;
+  font-size: 16px;
 }
-
+.slider__desc {
+  margin-top: 2.6rem;
+  display: flex;
+  justify-content: space-between;
+}
 .slider__left-value {
-  left: 6px;
+  left: 0;
 }
 
 .slider__right-value {
-  right: -4px;
+  right: 0;
 }
 
 /* Removing the default appearance */
@@ -98,7 +99,7 @@ input[type="search"]::-webkit-search-cancel-button {
   pointer-events: none;
   position: absolute;
   height: 0;
-  width: 200px;
+  width: 240px;
   outline: none;
 }
 
@@ -116,14 +117,14 @@ input[type="search"]::-webkit-search-cancel-button {
 
 /* For Chrome browsers */
 .thumb::-webkit-slider-thumb {
-  background-color: #f1f5f7;
-  border: none;
+  background-image: linear-gradient(to right, #3730a3, #5b21b6);
+  border: 4px solid #FFFFFF;
   border-radius: 50%;
-  box-shadow: 0 0 1px 1px #ced4da;
+  box-shadow: 0 0 12px 1px #08080833;
   cursor: pointer;
   height: 18px;
   width: 18px;
-  margin-top: 4px;
+  margin-top: 10px;
   pointer-events: all;
   position: relative;
 }

@@ -16,43 +16,43 @@ import { usePagination } from "@/hooks/usePagination";
 import { prisma } from "@/backend/utils/prisma";
 import { AsyncReturnType } from "@/backend/utils/ts-bs";
 import MultiRangeSlider from "@/components/UI/MultiRangeSlider";
+// import Select from "react-select";
+import Select from "@/components/UI/Select";
 
-const initialState = {
+const colors = [
+  "black",
+  "blue",
+  "brown",
+  "gray",
+  "green",
+  "pink",
+  "purple",
+  "red",
+  "white",
+  "yellow",
+];
+
+const sort = ["default", "name", "color", "base experience"];
+
+const initialFilters = {
   search: "",
-  rangeMin: 36,
-  rangeMax: 635,
-  color: "",
+  minExperience: 36,
+  maxExperience: 635,
+  filterByColor: "green",
+  sort: "default",
   page: 1,
 };
 
 type ACTIONTYPE =
-  | { type: "color"; color: string }
-  | { type: "search"; search: string }
-  | { type: "rangeMin"; rangeMin: number }
-  | { type: "rangeMax"; rangeMax: number }
-  | { type: "pagination"; page: number };
+  | { type: "useFilter"; payload: { key: string; value: string } }
+  | { type: "changePage"; page: number };
 
-function reducer(state: typeof initialState, action: ACTIONTYPE) {
+//action contains informations from dispatch.
+function reducer(state: typeof initialFilters, action: ACTIONTYPE) {
   switch (action.type) {
-    case "color":
-      return { ...state, search: "", page: 1, color: action.color };
-    case "search":
-      return { ...state, page: 1, search: action.search };
-    case "rangeMin":
-      return {
-        ...state,
-        search: "",
-        page: 1,
-        rangeMin: action.rangeMin,
-      };
-    case "rangeMax":
-      return {
-        ...state,
-        search: "",
-        page: 1,
-        rangeMax: action.rangeMax,
-      };
-    case "pagination":
+    case "useFilter":
+      return { ...state, [action.payload.key]: action.payload.value };
+    case "changePage":
       return { ...state, page: action.page };
     default:
       const _exhaustiveCheck: never = action;
@@ -63,13 +63,15 @@ function reducer(state: typeof initialState, action: ACTIONTYPE) {
 type PokemonQueryResult = AsyncReturnType<typeof getAllPokemons>;
 
 const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialFilters);
   const searchRef = useRef<HTMLInputElement>(null);
 
   const filteredData = pokemon.filter(
     (pokemon) =>
-      pokemon.color.includes(state.color) && pokemon.name.includes(state.search) &&
-    pokemon.baseExperience >= state.rangeMin
+      pokemon.color.includes(state.filterByColor) &&
+      pokemon.name.includes(state.search) &&
+      pokemon.baseExperience >= state.minExperience &&
+      pokemon.baseExperience <= state.maxExperience
   );
 
   const totalCount = filteredData?.length!;
@@ -84,23 +86,23 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
   const handleSearch = useMemo(
     () =>
       debounce(
-        (e) => dispatch({ type: "search", search: e.target.value }),
+        (e) =>
+          dispatch({
+            type: "useFilter",
+            payload: { key: "search", value: e.target.value },
+          }),
         350
       ),
     []
   );
-  // const handleRangeMin = (e) =>
-  //   dispatch({
-  //     type: "rangeMin",
-  //     rangeMin: e.target.value,
-  //   });
+
   const handleRangeMin = useMemo(
     () =>
       debounce(
         (e) =>
           dispatch({
-            type: "rangeMin",
-            rangeMin: e,
+            type: "useFilter",
+            payload: { key: "minExperience", value: e },
           }),
         0
       ),
@@ -111,34 +113,49 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
       debounce(
         (e) =>
           dispatch({
-            type: "rangeMax",
-            rangeMax: e,
+            type: "useFilter",
+            payload: { key: "maxExperience", value: e },
           }),
         0
       ),
     []
   );
-  console.log(state);
+  const handleFilter = (value: string) => {
+    dispatch({
+      type: "useFilter",
+      payload: { key: "filterByColor", value: value },
+    });
+  };
+  const handleSorting = (value: string) => {
+    dispatch({ type: "useFilter", payload: { key: "sort", value: value } });
+  };
+
   return (
     <main className="mx-auto px-[2rem] lg:px-20 3xl:px-40 mt-10 sm:mt-20 pb-20">
-      <div className="3xl:flex 3xl:gap-10 3xl:justify-between">
-        <div className="flex flex-wrap gap-3">
-          {pokemonColors.map((color) => (
-            <button
-              key={color}
-              type="button"
-              className={`h-10 px-6 py-2.5 bg-white text-slate-800 font-bold text-md leading-tight capitalize rounded-full shadow-md transition duration-150 ease-in-out ${
-                color === state.color &&
-                "text-white bg-gradient-to-r from-indigo-800 to-violet-800"
-              }`}
-              onClick={() => {
-                if (searchRef.current) searchRef.current.value = "";
-                dispatch({ type: "color", color: color });
-              }}
-            >
-              {color}
-            </button>
-          ))}
+      <div className="3xl:flex 3xl:gap-10 3xl:justify-between items-center">
+        <div className="flex gap-10">
+          <Select
+            state={state.sort}
+            onChange={handleSorting}
+            list={sort}
+            title="Sort by"
+          />
+          <Select
+            state={state.filterByColor}
+            onChange={handleFilter}
+            list={colors}
+            title="Filter by"
+          />
+          <div>
+            <MultiRangeSlider
+              min={36}
+              max={635}
+              minVal={state.minExperience}
+              maxVal={state.maxExperience}
+              onChangeMin={handleRangeMin}
+              onChangeMax={handleRangeMax}
+            />
+          </div>
         </div>
         <div className="relative mt-5 3xl:mt-0">
           <input
@@ -177,34 +194,15 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
           </span>
         </div>
       </div>
-      <label htmlFor="" className="text-lg mr-4">
-        Base experience:
-      </label>
-      {/* <input
-        className="mt-8"
-        type="range"
-        min="36"
-        max="635"
-        onChange={(e) => handleRangeMin(e)}
-      /> */}
-      <MultiRangeSlider
-        min={36}
-        max={635}
-        minVal={state.rangeMin}
-        maxVal={state.rangeMax}
-        onChangeMin={handleRangeMin}
-        onChangeMax={handleRangeMax}
-      />
-      {/* <p>{state.range}</p> */}
       {filteredData && <PokemonListing data={filteredData} page={state.page} />}
       {paginationRange?.length < 2 || !paginationRange ? null : (
         <div className="flex justify-center">
           <Pagination
             onArrowClick={(sign: number = 0) =>
-              dispatch({ type: "pagination", page: state.page + sign })
+              dispatch({ type: "changePage", page: state.page + sign })
             }
             onPageClick={(page: number) =>
-              dispatch({ type: "pagination", page: page })
+              dispatch({ type: "changePage", page: page })
             }
             disabledPrev={state.page < 2}
             disabledNext={lastPage}
