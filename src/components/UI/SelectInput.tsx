@@ -2,12 +2,12 @@ import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 
 export default function Select({
-  state,
+  selected,
   onChange,
   options,
   title,
 }: {
-  state: string;
+  selected: string;
   onChange: (value: string) => void;
   options: string[];
   title: string;
@@ -15,11 +15,11 @@ export default function Select({
   return (
     <div className="w-72 z-20">
       <p className="mb-5 text-xl font-medium">{title}:</p>
-      <Listbox value={state} onChange={onChange}>
+      <Listbox value={selected} onChange={onChange}>
         <div className="relative">
           <Listbox.Button className="relative w-full rounded-full bg-white h-10 pl-6 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 text-slate-800 font-bold text-md">
             <span className="block text-black truncate capitalize">
-              {state}
+              {selected}
             </span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 stroke-slate-800">
               <svg
@@ -44,7 +44,7 @@ export default function Select({
             leaveTo="opacity-0"
           >
             <Listbox.Options className="absolute mt-1 w-full overflow-auto rounded-xl bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-slate-800 text-md">
-              {options.map((person, index) => (
+              {options.map((person) => (
                 <Listbox.Option
                   key={person}
                   className={({ active }) =>

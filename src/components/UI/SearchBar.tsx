@@ -1,7 +1,9 @@
 const SearchBar = ({
   handleSearch,
+  searchRef,
 }: {
   handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  searchRef: React.Ref<HTMLInputElement>;
 }) => {
   return (
     <div className="relative mt-5 3xl:mt-0">
@@ -11,6 +13,7 @@ const SearchBar = ({
         placeholder="Search by name..."
         aria-label="Search"
         onChange={(e) => handleSearch(e)}
+        ref={searchRef}
       />
       <span className="absolute left-3 top-[7.5px] text-gray-700">
         <svg

@@ -27,7 +27,7 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
 
   const filteredData = pokemon.filter(
     (pokemon) =>
-      pokemon.color.includes(state.filterByColor) &&
+      pokemon.color.includes(state.color === "None" ? "" : state.color) &&
       pokemon.name.includes(state.search) &&
       pokemon.baseExperience >= state.minExperience &&
       pokemon.baseExperience <= state.maxExperience
@@ -39,8 +39,10 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
     totalCount,
     PAGE_SIZE,
     currentPage,
-  })!;
-  let lastPage = paginationRange?.[paginationRange?.length - 1] === state.page;
+  });
+  const lastPage =
+    paginationRange?.[paginationRange?.length - 1] === state.page;
+
   const handleSearch = useMemo(
     () =>
       debounce(
@@ -54,38 +56,24 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
     []
   );
 
-  const handleRangeMin = useMemo(
-    () =>
-      debounce(
-        (e) =>
-          dispatch({
-            type: "useFilter",
-            payload: { key: "minExperience", value: e },
-          }),
-        0
-      ),
-    []
-  );
-  const handleRangeMax = useMemo(
-    () =>
-      debounce(
-        (e) =>
-          dispatch({
-            type: "useFilter",
-            payload: { key: "maxExperience", value: e },
-          }),
-        0
-      ),
-    []
-  );
-  const handleFilter = (value: string) => {
+  const handleMultiRangeInput = (e: number, key: string) =>
     dispatch({
       type: "useFilter",
-      payload: { key: "filterByColor", value: value },
+      payload: { key: key, value: e },
     });
-  };
-  const handleSorting = (value: string) => {
+
+  const handleSortSelectInput = (value: string) =>
     dispatch({ type: "useFilter", payload: { key: "sort", value: value } });
+
+  const handleColorSelectInput = (value: string) =>
+    dispatch({
+      type: "useFilter",
+      payload: { key: "color", value: value },
+    });
+
+  const handleResetButton = () => {
+    dispatch({ type: "reset" });
+    if (searchRef.current) searchRef.current.value = "";
   };
 
   return (
@@ -93,37 +81,40 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
       <div className="3xl:flex 3xl:gap-10 3xl:justify-between items-center">
         <div className="flex gap-10 items-center">
           <SelectInput
-            state={state.sort}
-            onChange={handleSorting}
-            options={sortOptions}
             title="Sort by"
+            selected={state.sort}
+            onChange={handleSortSelectInput}
+            options={sortOptions}
           />
           <SelectInput
-            state={state.filterByColor}
-            onChange={handleFilter}
-            options={colorsOptions}
             title="Filter by"
+            selected={state.color}
+            onChange={handleColorSelectInput}
+            options={colorsOptions}
           />
           <MultiRangeInput
             min={36}
             max={635}
             minVal={state.minExperience}
             maxVal={state.maxExperience}
-            onChangeMin={handleRangeMin}
-            onChangeMax={handleRangeMax}
+            onChange={handleMultiRangeInput}
           />
           <button
             type="button"
-            className="h-10 px-6 bg-white text-black font-bold text-md leading-tight capitalize rounded-full shadow-md transition duration-150 ease-in-out focus:bg-neutral-300"
-            onClick={() => dispatch({ type: "reset" })}
+            className="h-10 px-6 bg-white text-black font-bold text-md leading-tight capitalize rounded-full shadow-md"
+            onClick={handleResetButton}
           >
             Reset all filters
           </button>
         </div>
-        <SearchBar handleSearch={handleSearch} />
+        <SearchBar handleSearch={handleSearch} searchRef={searchRef} />
       </div>
-      {filteredData && <PokemonListing data={filteredData} page={state.page} />}
-      {paginationRange?.length < 2 || !paginationRange ? null : (
+      {filteredData && filteredData.length > 0 ? (
+        <PokemonListing data={filteredData} page={state.page} />
+      ) : (
+        <PokemonEmptyMessage />
+      )}
+      {!paginationRange || paginationRange.length < 2 ? null : (
         <Pagination
           onArrowClick={(sign: number = 0) =>
             dispatch({ type: "changePage", page: state.page + sign })
@@ -158,7 +149,6 @@ const PokemonListing = ({
               <PokemonImage image={pokemon.spriteUrl} />
             </div>
             <div className="bg-[#111111de] rounded-3xl h-72 -mt-20 px-6 font-semibold text-violet-100 w-full">
-              {/* animate-fade-in */}
               <h1 className="text-center pt-24 capitalize text-3xl mb-6">
                 {pokemon.name}
               </h1>
@@ -190,13 +180,19 @@ const PokemonListing = ({
   );
 };
 
+const PokemonEmptyMessage = () => {
+  return (
+    <div className="mt-20 flex flex-col items-center justify-center min-h-[600px] animate-fade-in">
+      <p className="text-4xl font-medium">No results found</p>
+      <p className="text-xl mt-2 font-normal">
+        We couldn`t find what you are looking for
+      </p>
+    </div>
+  );
+};
+
 const getAllPokemons = async () => {
   return await prisma.pokemon.findMany({
-    // where: {
-    //   name: { contains: "" },
-    //   id: { lte: 635 },
-    //   color: { contains: "" },
-    // },
     select: {
       id: true,
       name: true,

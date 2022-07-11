@@ -1,4 +1,5 @@
 export const colorsOptions = [
+  "None",
   "black",
   "blue",
   "brown",
@@ -17,14 +18,14 @@ export const initialFilters = {
   search: "",
   minExperience: 36,
   maxExperience: 635,
-  filterByColor: "green",
+  color: "None",
   sort: "default",
   page: 1,
 };
 
 //Action contains informations from dispatch.
 export type ACTIONTYPE_FILTERS =
-  | { type: "useFilter"; payload: { key: string; value: string } }
+  | { type: "useFilter"; payload: { key: string; value: string | number } }
   | { type: "changePage"; page: number }
   | { type: "reset" };
 

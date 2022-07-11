@@ -2,9 +2,11 @@ import type { GetStaticProps } from "next";
 import { prisma } from "@/backend/utils/prisma";
 import { AsyncReturnType } from "@/backend/utils/ts-bs";
 import Image from "next/image";
-import { usePagination, DOTS } from "@/hooks/usePagination";
+import { usePagination } from "@/hooks/usePagination";
 import { useState } from "react";
 import Pagination from "@/components/UI/Pagination";
+
+const PAGE_SIZE = 10;
 
 type PokemonQueryResult = AsyncReturnType<typeof getPokemonInOrder>;
 
@@ -47,11 +49,10 @@ const Results: React.FC<{
 }> = (props) => {
   const [page, setPage] = useState(1);
   const totalCount = props.pokemon.length;
-  const pageSize = 10;
   const currentPage = page;
   const paginationRange = usePagination({
     totalCount,
-    pageSize,
+    PAGE_SIZE,
     currentPage,
   })!;
   let lastPage = paginationRange[paginationRange.length - 1] === page;

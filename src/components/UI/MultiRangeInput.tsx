@@ -6,15 +6,13 @@ const MultiRangeSlider = ({
   max,
   minVal,
   maxVal,
-  onChangeMin,
-  onChangeMax,
+  onChange,
 }: {
   min: number;
   max: number;
   minVal: number;
   maxVal: number;
-  onChangeMin: (e: number) => void;
-  onChangeMax: (e: number) => void;
+  onChange: (e: number, key: string) => void;
 }) => {
   // const [minVal, setMinVal] = useState(min);
   // const [maxVal, setMaxVal] = useState(max);
@@ -63,13 +61,13 @@ const MultiRangeSlider = ({
       <p className="mb-5 text-xl font-medium">Base Experience:</p>
       <input
         type="range"
-        min="36"
-        max="635"
+        min={min}
+        max={max}
         value={minVal}
         ref={minValRef}
         onChange={(e) => {
           const value = Math.min(+e.target.value, maxVal - 1);
-          onChangeMin(value);
+          onChange(value, "minExperience");
           e.target.value = value.toString();
         }}
         className={`thumb thumb--zindex-3
@@ -83,7 +81,7 @@ const MultiRangeSlider = ({
         value={maxVal}
         onChange={(e) => {
           const value = Math.max(+e.target.value, minVal + 1);
-          onChangeMax(value);
+          onChange(value, "maxExperience");
           e.target.value = value.toString();
         }}
         className="thumb thumb--zindex-4"
