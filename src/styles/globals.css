@@ -131,14 +131,14 @@ input[type="search"]::-webkit-search-cancel-button {
 
 /* For Firefox browsers */
 .thumb::-moz-range-thumb {
-  background-color: #f1f5f7;
-  border: none;
+  background-image: linear-gradient(to right, #3730a3, #5b21b6);
+  border: 4px solid #FFFFFF;
   border-radius: 50%;
-  box-shadow: 0 0 1px 1px #ced4da;
+  box-shadow: 0 0 12px 1px #08080833;
   cursor: pointer;
-  height: 18px;
-  width: 18px;
-  margin-top: 4px;
+  height: 12px;
+  width: 12px;
+  margin-top: 10px;
   pointer-events: all;
   position: relative;
 }

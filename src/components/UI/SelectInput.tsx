@@ -4,12 +4,12 @@ import { Listbox, Transition } from "@headlessui/react";
 export default function Select({
   state,
   onChange,
-  list,
+  options,
   title,
 }: {
   state: string;
   onChange: (value: string) => void;
-  list: string[];
+  options: string[];
   title: string;
 }) {
   return (
@@ -44,9 +44,9 @@ export default function Select({
             leaveTo="opacity-0"
           >
             <Listbox.Options className="absolute mt-1 w-full overflow-auto rounded-xl bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-slate-800 text-md">
-              {list.map((person, personIdx) => (
+              {options.map((person, index) => (
                 <Listbox.Option
-                  key={personIdx}
+                  key={person}
                   className={({ active }) =>
                     `relative cursor-default select-none py-2 pl-10 pr-4 ${
                       active ? "bg-violet-100" : ""

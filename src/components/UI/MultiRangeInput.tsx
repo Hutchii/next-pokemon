@@ -59,7 +59,7 @@ const MultiRangeSlider = ({
   // }, [minVal, maxVal, onChange]);
 
   return (
-    <>
+    <div>
       <p className="mb-5 text-xl font-medium">Base Experience:</p>
       <input
         type="range"
@@ -98,7 +98,7 @@ const MultiRangeSlider = ({
           {minVal} - {maxVal}
         </p>
       </div>
-    </>
+    </div>
   );
 };
 
