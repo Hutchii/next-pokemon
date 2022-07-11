@@ -1,15 +1,13 @@
 const Pagination = ({
   onArrowClick,
   onPageClick,
-  disabledPrev,
-  disabledNext,
+  lastPage,
   paginationRange,
   currentPage,
 }: {
   onArrowClick: (sign: number) => void;
   onPageClick: (page: number) => void;
-  disabledPrev: boolean;
-  disabledNext: boolean;
+  lastPage: boolean;
   paginationRange: (number | string)[];
   currentPage: number;
 }) => {
@@ -18,7 +16,7 @@ const Pagination = ({
       <button
         className="text-2xl mr-2 disabled:opacity-25"
         onClick={() => onArrowClick(-1)}
-        disabled={disabledPrev}
+        disabled={currentPage < 2}
       >
         &#8592;
       </button>
@@ -49,7 +47,7 @@ const Pagination = ({
       <button
         className="text-2xl ml-2 disabled:opacity-25"
         onClick={() => onArrowClick(+1)}
-        disabled={disabledNext}
+        disabled={lastPage}
       >
         &#8594;
       </button>
@@ -57,4 +55,4 @@ const Pagination = ({
   );
 };
 
-export default Pagination
+export default Pagination;

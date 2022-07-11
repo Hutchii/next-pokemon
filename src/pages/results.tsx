@@ -82,12 +82,9 @@ const Results: React.FC<{
       </div>
       {paginationRange.length < 2 || !paginationRange ? null : (
         <Pagination
-          onArrowClick={(sign: number = 0) =>
-            setPage((prevValue) => prevValue + sign)
-          }
+          onArrowClick={(sign: number = 0) => setPage((p) => p + sign)}
           onPageClick={(page: number) => setPage(page)}
-          disabledPrev={page < 2}
-          disabledNext={lastPage}
+          lastPage={lastPage}
           paginationRange={paginationRange}
           currentPage={page}
         />

@@ -122,8 +122,7 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQueryResult }) => {
           onPageClick={(page: number) =>
             dispatch({ type: "changePage", page: page })
           }
-          disabledPrev={state.page < 2}
-          disabledNext={lastPage}
+          lastPage={lastPage}
           paginationRange={paginationRange}
           currentPage={state.page}
         />
@@ -141,41 +140,39 @@ const PokemonListing = ({
 }): JSX.Element => {
   return (
     <div className="grid md:grid-cols-[repeat(auto-fill,minmax(330px,_1fr))] md2:grid-cols-[repeat(auto-fill,minmax(380px,_1fr))] gap-10 mt-20">
-      {data
-        .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
-        .map((pokemon: any) => (
-          <div key={pokemon.id} className="flex flex-col items-center">
-            <div className="h-52 sm:h-64 drop-shadow-[0_0_100px_#3700ffb9] z-10">
-              <PokemonImage image={pokemon.spriteUrl} />
+      {data.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((pokemon) => (
+        <div key={pokemon.id} className="flex flex-col items-center">
+          <div className="h-52 sm:h-64 drop-shadow-[0_0_100px_#3700ffb9] z-10">
+            <PokemonImage image={pokemon.spriteUrl} />
+          </div>
+          <div className="bg-[#111111de] rounded-3xl h-72 -mt-20 px-6 font-semibold text-violet-100 w-full">
+            <h1 className="text-center pt-24 capitalize text-3xl mb-6">
+              {pokemon.name}
+            </h1>
+            <div className="text-lg flex justify-between items-center gap-4 w-full">
+              <p>Percent:</p>
+              <p className="text-gray-400">
+                {generateCountPercent(pokemon) + "%"}
+              </p>
+              <div className="relative w-32">
+                <div className="bg-gray-300 rounded-full w-full h-4 opacity-50" />
+                <div
+                  className="absolute inset-0 bg-violet-100 rounded-full h-4"
+                  style={{ width: `${+generateCountPercent(pokemon)}%` }}
+                />
+              </div>
             </div>
-            <div className="bg-[#111111de] rounded-3xl h-72 -mt-20 px-6 font-semibold text-violet-100 w-full">
-              <h1 className="text-center pt-24 capitalize text-3xl mb-6">
-                {pokemon.name}
-              </h1>
-              <div className="text-lg flex justify-between items-center gap-4 w-full">
-                <p>Percent:</p>
-                <p className="text-gray-400">
-                  {generateCountPercent(pokemon) + "%"}
-                </p>
-                <div className="relative w-32">
-                  <div className="bg-gray-300 rounded-full w-full h-4 opacity-50" />
-                  <div
-                    className="absolute inset-0 bg-violet-100 rounded-full h-4"
-                    style={{ width: `${+generateCountPercent(pokemon)}%` }}
-                  />
-                </div>
-              </div>
-              <div className="text-lg flex justify-between items-center gap-4 w-full mt-2">
-                <p>Base experience:</p>
-                <p>{pokemon.baseExperience}</p>
-              </div>
-              <div className="text-lg flex justify-between items-center gap-4 w-full mt-2">
-                <p>Color:</p>
-                <p className="capitalize">{pokemon.color}</p>
-              </div>
+            <div className="text-lg flex justify-between items-center gap-4 w-full mt-2">
+              <p>Base experience:</p>
+              <p>{pokemon.baseExperience}</p>
+            </div>
+            <div className="text-lg flex justify-between items-center gap-4 w-full mt-2">
+              <p>Color:</p>
+              <p className="capitalize">{pokemon.color}</p>
             </div>
           </div>
-        ))}
+        </div>
+      ))}
     </div>
   );
 };
