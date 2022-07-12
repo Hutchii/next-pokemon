@@ -16,7 +16,7 @@ export default function Select({
 }) {
   return (
     <div className="w-72 z-20">
-      <p className="mb-5 text-xl font-medium">{title}:</p>
+      <p className="mb-3 text-xl font-medium">{title}:</p>
       <Listbox value={selected} onChange={onChange}>
         <div className="relative">
           <Listbox.Button className="relative w-full rounded-full bg-white h-10 pl-6 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 text-slate-800 font-bold text-md">

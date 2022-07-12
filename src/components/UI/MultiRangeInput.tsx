@@ -58,7 +58,7 @@ const MultiRangeSlider = ({
 
   return (
     <div>
-      <p className="mb-5 text-xl font-medium">Base Experience:</p>
+      <p className="mb-3 text-xl font-medium">Base Experience:</p>
       <div className="slider__bg">
         {/* <p className="slider__left-value">{minVal}</p> */}
         <div>

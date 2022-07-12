@@ -115,8 +115,8 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQuery }) => {
 
   return (
     <main className="mx-auto px-[2rem] lg:px-20 3xl:px-40 mt-10 sm:mt-20 pb-20">
-      <div className="3xl:flex 3xl:gap-10 3xl:justify-between items-center">
-        <div className="flex gap-10 items-center">
+      <div className="3xl:flex 3xl:gap-10 3xl:justify-between items-end">
+        <div className="flex gap-8 items-end">
           <SelectInput
             title="Sort by"
             selected={state.sort}
