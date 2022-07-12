@@ -44,10 +44,19 @@ input[type="search"]::-webkit-search-cancel-button {
 
 .slider {
   position: relative;
-  width: 240px;
-  margin-top: 1rem;
+  width: 200px;
 }
-
+.slider__bg {
+  width: 100%;
+  background: #ffffff;
+  height: 40px;
+  border-radius: 20rem;
+  width: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.3rem;
+}
 .slider__track,
 .slider__range {
   position: absolute;
@@ -56,36 +65,30 @@ input[type="search"]::-webkit-search-cancel-button {
 .slider__track,
 .slider__range {
   border-radius: 20rem;
-  height: 10px;
+  height: 8px;
+  margin-top: -0.2rem;
 }
 
 .slider__track {
-  background-color: #FFFFFF;
+  background-color: #cbd5e1;
   width: 100%;
   z-index: 1;
 }
 
 .slider__range {
-  background-image: linear-gradient(to right, #3730a3, #5b21b6);
+  background: #1e293b;
   z-index: 2;
 }
 
-.slider__left-value,
-.slider__right-value {
-  color: #94a3b8;
+.slider__values {
+  color: #1e293b;
   font-size: 16px;
+  font-weight: 600;
 }
 .slider__desc {
   margin-top: 2.6rem;
   display: flex;
   justify-content: space-between;
-}
-.slider__left-value {
-  left: 0;
-}
-
-.slider__right-value {
-  right: 0;
 }
 
 /* Removing the default appearance */
@@ -99,7 +102,7 @@ input[type="search"]::-webkit-search-cancel-button {
   pointer-events: none;
   position: absolute;
   height: 0;
-  width: 240px;
+  width: 200px;
   outline: none;
 }
 
@@ -117,28 +120,28 @@ input[type="search"]::-webkit-search-cancel-button {
 
 /* For Chrome browsers */
 .thumb::-webkit-slider-thumb {
-  background-image: linear-gradient(to right, #3730a3, #5b21b6);
-  border: 4px solid #FFFFFF;
+  background: #ffffff;
+  border: 1px solid #64748b;
   border-radius: 50%;
-  box-shadow: 0 0 12px 1px #08080833;
+  box-shadow: 0 0 4px 1px #08080833;
   cursor: pointer;
-  height: 18px;
-  width: 18px;
-  margin-top: 10px;
+  height: 16px;
+  width: 16px;
+  margin-top: 1px;
   pointer-events: all;
   position: relative;
 }
 
 /* For Firefox browsers */
 .thumb::-moz-range-thumb {
-  background-image: linear-gradient(to right, #3730a3, #5b21b6);
-  border: 4px solid #FFFFFF;
+  background: #ffffff;
+  border: 1px solid #64748b;
   border-radius: 50%;
-  box-shadow: 0 0 12px 1px #08080833;
+  box-shadow: 0 0 4px 1px #08080833;
   cursor: pointer;
-  height: 12px;
-  width: 12px;
-  margin-top: 10px;
+  height: 16px;
+  width: 16px;
+  margin-top: 1px;
   pointer-events: all;
   position: relative;
 }

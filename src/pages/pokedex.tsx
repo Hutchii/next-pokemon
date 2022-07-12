@@ -99,10 +99,10 @@ const Pokedex = ({ pokemon }: { pokemon: PokemonQuery }) => {
     []
   );
 
-  const handleMultiRangeInput = (e: number, key: string) =>
+  const handleMultiRangeInput = (value: number, key: string) =>
     dispatch({
       type: "useFilter",
-      payload: { key: key, value: e },
+      payload: { key: key, value: value },
     });
 
   const handleSortSelectInput = (value: string, key: string) =>
