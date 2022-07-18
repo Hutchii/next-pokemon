@@ -9,22 +9,22 @@ const range = (start: number, end: number) => {
 
 export const usePagination = ({
   totalCount,
-  PAGE_SIZE,
+  pageSize,
   currentPage,
   siblingCount = 1,
 }: {
   totalCount: number;
-  PAGE_SIZE: number;
+  pageSize: number;
   currentPage: number;
   siblingCount?: number;
 }) => {
   const paginationRange = useMemo(() => {
     //Calculate number of pages
-    const totalPageCount = Math.ceil(totalCount / PAGE_SIZE);
+    const totalPageCount = Math.ceil(totalCount / pageSize);
     // Pages count is determined as siblingCount + firstPage + lastPage + currentPage + 2*DOTS
     const totalPageNumbers = siblingCount + 5;
 
-    if (PAGE_SIZE === 0) return null;
+    if (pageSize === 0) return null;
 
     //If number of pages is less that the page numbers, return range
     if (totalPageNumbers >= totalPageCount) {
@@ -67,7 +67,7 @@ export const usePagination = ({
       let middleRange = range(leftSiblingIndex, rightSiblingIndex);
       return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex];
     }
-  }, [totalCount, PAGE_SIZE, siblingCount, currentPage]);
+  }, [totalCount, pageSize, siblingCount, currentPage]);
 
   return paginationRange;
 };

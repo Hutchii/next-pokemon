@@ -12,7 +12,7 @@ const MultiRangeSlider = ({
   max: number;
   minVal: number;
   maxVal: number;
-  onChange: (e: number, key: string) => void;
+  onChange: (e: string, key: string) => void;
 }) => {
   // const [minVal, setMinVal] = useState(min);
   // const [maxVal, setMaxVal] = useState(max);
@@ -58,9 +58,8 @@ const MultiRangeSlider = ({
 
   return (
     <div>
-      <p className="mb-3 text-xl font-medium">Base Experience:</p>
+      <p className="mb-3 text-xl font-medium mt-4">Base experience:</p>
       <div className="slider__bg">
-        {/* <p className="slider__left-value">{minVal}</p> */}
         <div>
           <input
             type="range"
@@ -68,11 +67,12 @@ const MultiRangeSlider = ({
             max={max}
             value={minVal}
             ref={minValRef}
-            onChange={(e) => {
-              const value = Math.min(+e.target.value, maxVal - 1);
-              onChange(value, "minExperience");
-              e.target.value = value.toString();
-            }}
+            onChange={(e) =>
+              onChange(
+                Math.min(+e.target.value, maxVal - 1).toString(),
+                "minExperience"
+              )
+            }
             className={`thumb thumb--zindex-3
           ${minVal > max - 100 && "thumb--zindex-5"}`}
           />
@@ -82,11 +82,12 @@ const MultiRangeSlider = ({
             max={max}
             ref={maxValRef}
             value={maxVal}
-            onChange={(e) => {
-              const value = Math.max(+e.target.value, minVal + 1);
-              onChange(value, "maxExperience");
-              e.target.value = value.toString();
-            }}
+            onChange={(e) =>
+              onChange(
+                Math.min(+e.target.value, maxVal + 1).toString(),
+                "maxExperience"
+              )
+            }
             className="thumb thumb--zindex-4"
           />
           <div className="slider">
@@ -94,12 +95,10 @@ const MultiRangeSlider = ({
             <div ref={range} className="slider__range" />
           </div>
         </div>
-        <p className="slider__values">{minVal} - {maxVal}</p>
+        <p className="slider__values">
+          {minVal} - {maxVal}
+        </p>
       </div>
-      {/* <div className="slider__desc">
-        <p className="slider__right-value">{minVal}</p>
-        <p className="slider__right-value">{maxVal}</p>
-      </div> */}
     </div>
   );
 };

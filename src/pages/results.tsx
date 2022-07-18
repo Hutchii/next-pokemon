@@ -5,16 +5,11 @@ import Image from "next/image";
 import { usePagination } from "@/hooks/usePagination";
 import { useState } from "react";
 import Pagination from "@/components/UI/Pagination";
+import { generateCountPercent } from "@/utils/generateCountPercent";
 
-const PAGE_SIZE = 10;
+const pageSize = 10;
 
 type PokemonQueryResult = AsyncReturnType<typeof getPokemonInOrder>;
-
-const generateCountPercent = (pokemon: PokemonQueryResult[number]) => {
-  const { VoteFor, VoteAgainst } = pokemon._count;
-  if (VoteFor + VoteAgainst === 0) return 0;
-  return (VoteFor / (VoteFor + VoteAgainst)) * 100;
-};
 
 const PokemonListing: React.FC<{
   pokemon: PokemonQueryResult[number];
@@ -50,22 +45,22 @@ const Results: React.FC<{
   const [page, setPage] = useState(1);
   const totalCount = props.pokemon.length;
   const currentPage = page;
-  const paginationRange = usePagination({
+  const pagination = usePagination({
     totalCount,
-    PAGE_SIZE,
+    pageSize,
     currentPage,
-  })!;
-  let lastPage = paginationRange[paginationRange.length - 1] === page;
+  });
+  let lastPage = pagination?.at(-1) === page;
   return (
-    <main className="flex flex-col items-center mx-auto px-[2rem] pb-20">
-      <h1 className="mt-10 text-3xl sm:mt-20 sm:text-4xl lg:text-5xl mb-8 lg:mb-12 font-bold animate-fade-in">
+    <main className="md:flex md:flex-col md:items-center px-5 sm:px-10 2xl:px-20 4xl:px-40 pb-20">
+      <h1 className="text-center leading-normal mt-10 sm:mt-20 text-3xl sm:text-4xl lg:text-5xl mb-8 sm:mb-12 lg:mb-20 font-bold animate-fade-in">
         Voting
         <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-fuchsia-600">
           {" "}
           results
         </span>
       </h1>
-      <div className="bg-[#111111de] rounded-3xl w-full max-w-2xl font-semibold text-violet px-4 py-2 animate-fade-in">
+      <div className="bg-[#111111de] rounded-3xl w-full md:max-w-2xl font-semibold px-4 py-2 animate-fade-in">
         {props.pokemon
           .sort((a, b) => {
             const difference =
@@ -80,12 +75,12 @@ const Results: React.FC<{
           ))
           .slice((page - 1) * 10, page * 10)}
       </div>
-      {paginationRange.length < 2 || !paginationRange ? null : (
+      {!pagination || pagination.length < 2 ? null : (
         <Pagination
           onArrowClick={(sign: number = 0) => setPage((p) => p + sign)}
           onPageClick={(page: number) => setPage(page)}
           lastPage={lastPage}
-          paginationRange={paginationRange}
+          paginationRange={pagination}
           currentPage={page}
         />
       )}

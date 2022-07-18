@@ -20,13 +20,15 @@ export const initialFilters = {
   maxExperience: 635,
   color: "",
   sort: "",
+  sortBy: true,
   page: 1,
 };
 
 //Action contains informations from dispatch.
 export type ACTIONTYPE_FILTERS =
-  | { type: "useFilter"; payload: { key: string; value: string | number } }
+  | { type: "useFilter"; payload: { key: string; value: string } }
   | { type: "changePage"; page: number }
+  | { type: "sortBy" }
   | { type: "reset" };
 
 export const reducerFilters = (
@@ -37,7 +39,9 @@ export const reducerFilters = (
     case "useFilter":
       return { ...state, page: 1, [action.payload.key]: action.payload.value };
     case "changePage":
-      return { ...state, page: 1 };
+      return { ...state, page: action.page };
+    case "sortBy":
+      return { ...state, sortBy: !state.sortBy, page: 1 };
     case "reset":
       return initialFilters;
     default:

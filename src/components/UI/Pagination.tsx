@@ -12,7 +12,7 @@ const Pagination = ({
   currentPage: number;
 }) => {
   return (
-    <div className="flex gap-1 mt-10 items-center font-medium justify-center">
+    <div className="flex gap-1 mt-6 lg:mt-10 items-center font-medium justify-center">
       <button
         className="text-2xl mr-2 disabled:opacity-25"
         onClick={() => onArrowClick(-1)}

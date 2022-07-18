@@ -2,16 +2,12 @@ import Link from "next/link";
 
 const Header = () => {
   return (
-    <header className="h-20 px-40 mx-auto text-md font-semibold">
+    <header className="text-md sm:text-lg h-20 px-5 sm:px-10 2xl:px-20 4xl:px-40 mx-auto text-md font-semibold">
       <nav className="flex items-center justify-between h-full">
-        <p>Logo</p>
-        <ul className="flex items-center gap-12">
-          <li className="text-fuchsia-600">Sign in</li>
-          <Link href="/">
-            <a>
-              <li>Vote</li>
-            </a>
-          </Link>
+        <Link href="/">
+          <a className="font-bold uppercase text-fuchsia-500">Pokemon</a>
+        </Link>
+        <ul className="flex items-center gap-10">
           <Link href="/results">
             <a>
               <li>Results</li>
