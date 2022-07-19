@@ -48,14 +48,18 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 .slider__bg {
   width: 100%;
-  background: #ffffff;
+  background: #ede9fe;
   height: 40px;
   border-radius: 20rem;
-  /* width: 320px; */
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1.3rem;
+}
+@media(min-width: 480px) {
+  .slider__bg {
+    width: 320px;
+  }
 }
 .slider__track,
 .slider__range {

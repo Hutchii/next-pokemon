@@ -41,9 +41,9 @@ const PokemonListing: React.FC<{
 
 const Results: React.FC<{
   pokemon: PokemonQueryResult;
-}> = (props) => {
+}> = ({ pokemon }) => {
   const [page, setPage] = useState(1);
-  const totalCount = props.pokemon.length;
+  const totalCount = pokemon.length;
   const currentPage = page;
   const pagination = usePagination({
     totalCount,
@@ -61,7 +61,7 @@ const Results: React.FC<{
         </span>
       </h1>
       <div className="bg-[#111111de] rounded-3xl w-full md:max-w-2xl font-semibold px-4 py-2 animate-fade-in">
-        {props.pokemon
+        {pokemon
           .sort((a, b) => {
             const difference =
               generateCountPercent(b) - generateCountPercent(a);

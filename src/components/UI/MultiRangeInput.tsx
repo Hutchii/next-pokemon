@@ -58,7 +58,7 @@ const MultiRangeSlider = ({
 
   return (
     <div>
-      <p className="mb-3 text-xl font-medium mt-4">Base experience:</p>
+      <p className="font-medium text-lg mb-1 sm:mb-1.5 lg:mb-2 lg:text-xl">Base experience:</p>
       <div className="slider__bg">
         <div>
           <input

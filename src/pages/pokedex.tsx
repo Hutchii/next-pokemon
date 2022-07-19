@@ -98,8 +98,7 @@ const Pokedex = ({ pokemon }: { pokemon: DataQuery }) => {
   };
   return (
     <main className="px-5 sm:px-10 2xl:px-20 4xl:px-40 mt-10 sm:mt-20 pb-20">
-      <div className="3xl:flex 3xl:gap-10 3xl:justify-between items-end">
-        {/* <div className="3xl:flex 3xl:gap-8 3xl:items-end"> */}
+      <div className="flex gap-4 flex-col flex-wrap md:flex-row md:items-end">
         <SelectInput
           title="Sort by"
           selected={state.sort}
@@ -130,12 +129,11 @@ const Pokedex = ({ pokemon }: { pokemon: DataQuery }) => {
         <SearchBar handleSearch={handleSearch} searchRef={searchRef} />
         <button
           type="button"
-          className="h-10 px-6 bg-white text-black font-bold text-md leading-tight rounded-full shadow-md mt-4"
+          className="sm:max-w-[320px] h-10 px-6 bg-violet-100 text-gray-900 font-bold text-md capitalize rounded-full shadow-md transition duration-150 ease-in-out focus:bg-violet-200"
           onClick={handleReset}
         >
           Reset all filters
         </button>
-        {/* </div> */}
       </div>
       {filteredData && filteredData.length > 0 ? (
         <PokemonListing data={filteredData} currentPage={state.page} />
@@ -212,7 +210,7 @@ const PokemonEmptyMessage = () => {
     <div className="mt-20 flex flex-col items-center justify-center min-h-[600px] animate-fade-in">
       <p className="text-4xl font-medium">No results found</p>
       <p className="text-xl mt-2 font-normal">
-        We couldn`t find what you are looking for
+        We couldn`t find what you are looking for!
       </p>
     </div>
   );

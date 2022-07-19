@@ -17,13 +17,13 @@ export default function Select({
   children?: JSX.Element;
 }) {
   return (
-    <div className="flex items-end mt-4">
-      <div className="w-full sm:w-80 z-20">
-        <p className="mb-3 text-xl font-medium">{title}:</p>
+    <div className="flex items-end">
+      <div className="w-full sm:w-80">
+        <p className="text-lg mb-1 sm:mb-1.5 lg:mb-2 lg:text-xl">{title}:</p>
         <Listbox value={selected} onChange={(value) => onChange(value)}>
           <div className="relative">
-            <Listbox.Button className="relative w-full rounded-full bg-white h-10 pl-6 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 text-slate-800 font-bold text-md">
-              <span className="block text-black truncate capitalize">
+            <Listbox.Button className="relative w-full rounded-full bg-violet-100 h-10 pl-6 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 text-slate-800 font-bold text-md">
+              <span className="block text-slate-800 truncate capitalize">
                 {selected === "" ? defaultName : selected}
               </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 stroke-slate-800">
@@ -48,13 +48,13 @@ export default function Select({
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Listbox.Options className="absolute mt-1 w-full overflow-auto rounded-xl bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-slate-800 text-md">
+              <Listbox.Options className="absolute mt-1 w-full overflow-auto rounded-xl bg-violet-100 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-slate-800 text-md z-50">
                 {options.map((person) => (
                   <Listbox.Option
                     key={person}
                     className={({ active }) =>
                       `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                        active ? "bg-violet-100" : ""
+                        active ? "bg-violet-200" : ""
                       }`
                     }
                     value={person}
